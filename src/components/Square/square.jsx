@@ -2,24 +2,16 @@ import styled from 'styled-components';
 
 export default function Squares({coordinateNumber, pieceImg}) {
   if (coordinateNumber % 2 === 0){
-    return(<WhiteSquare color={'White'}>
-      {
-        pieceImg ? 
-        <img alt='piece' src={pieceImg}/> 
-        : 
-        null
-      }
+    return(
+    <WhiteSquare color={'White'}>
+      {pieceImg && <div className='Piece' style={{backgroundImage: `url(${pieceImg})`}}/>}  
     </WhiteSquare>)
-    //should be refactored
   }
+  
   else {
-    return(<BlackSquare color={'Black'}>
-      {
-        pieceImg ? 
-        <img alt='piece' src={pieceImg}/> 
-        : 
-        null
-      }
+    return(
+    <BlackSquare color={'Black'}>
+       {pieceImg && <div className='Piece' style={{backgroundImage: `url(${pieceImg})`}}/>} 
     </BlackSquare>)
   }
 }
@@ -31,6 +23,14 @@ const BlackSquare = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  .Piece{
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60px;
+  }
 `
 
 const WhiteSquare = styled.div`
@@ -40,4 +40,12 @@ const WhiteSquare = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  .Piece{
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60px;
+  }
 `

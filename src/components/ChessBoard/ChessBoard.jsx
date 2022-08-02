@@ -50,7 +50,13 @@ export default function ChessBoard() {
           pieceImg = piece.pieceImg
         }
       })
-      board.push(<Squares coordinateNumber={coordinateNumber} pieceImg={pieceImg} />)
+      board.push(
+        <Squares 
+          key={`${YAxis},${XAxis}`}
+          coordinateNumber={coordinateNumber} 
+          pieceImg={pieceImg} 
+        />
+      )
     }
   }
   return(
