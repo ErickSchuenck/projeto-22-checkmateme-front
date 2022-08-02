@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartingScreen from "./pages/StartingScreen/StartingScreen";
-import ChessBoard from "./components/ChessBoard";
+import ChessBoard from "./components/ChessBoard/ChessBoard.jsx";
 
 function App() {
   return (
