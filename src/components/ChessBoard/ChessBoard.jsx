@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Squares from '../Square/square';
-
+import { useRef } from 'react';
 
 const YAxis = ['8','7','6','5','4','3','2','1']
 const XAxis = ['a','b','c','d','e','f','g','h']
@@ -29,6 +29,7 @@ for (let i = 0; i < 8; i++){
     }
   )
 }
+
 for (let i = 0; i < 8; i++){
   pieces.push(
     {
@@ -42,41 +43,51 @@ for (let i = 0; i < 8; i++){
 let activePiece = null;
 let xIni, yIni, squareSize;
 
-function grabPiece(event){
-  const element = event.target;
-  if (element.classList.contains('Piece')){
-    squareSize = element.offsetWidth
-    // const x = event.clientX -676;
-    // const y = event.clientY -338;
-    // element.style.position = 'absolute';
-    // element.style.transform = `${x}px`
-    // element.style.top = `${y}px`
-    xIni = event.clientX;
-    yIni = event.clientY;
-    activePiece = element;
-  }
-}
-
-function movePiece(event){
-  if (activePiece){
-    const x = 100 * (event.clientX - xIni) / squareSize;
-    const y = 100 * (event.clientY - yIni) / squareSize;
-    console.log(Math.ceil((x -50) / 100), Math.ceil((y -50) / 100))
-    // activePiece.style.position = 'absolute';
-    activePiece.style.left = `${x}px`
-    // activePiece.style.top = `${y}px`
-    activePiece.style.transform = `translate(${x}%, ${y}%)`
-  }
-}
-
-function dropPiece(event){
-  if (activePiece){
-    activePiece = null
-  }
-}
-
-
 export default function ChessBoard() {
+
+   const chessBoardRef = useRef(null)
+
+  function grabPiece(event){
+    const element = event.target;
+    if (element.classList.contains('Piece')){
+      squareSize = element.offsetWidth;
+      xIni = event.clientX;
+      yIni = event.clientY;
+      activePiece = element;  
+    }
+  }
+
+  function movePiece(event){
+    if (activePiece){
+      const x = 100 * (event.clientX - xIni) / squareSize;
+      const y = 100 * (event.clientY - yIni) / squareSize;
+      
+      let leftConstraint = chessBoardRef.current.offsetLeft;
+      let rightConstraint = chessBoardRef.current.offsetLeft + chessBoardRef.current.offsetWidth;
+      let topConstraint = chessBoardRef.current.offsetTop;
+      let bottomConstraint = chessBoardRef.current.offsetTop + chessBoardRef.current.offsetHeight;
+
+      console.log(chessBoardRef)
+
+      if (
+        event.clientX > leftConstraint 
+        && event.clientX < rightConstraint
+        && event.clientY < bottomConstraint
+        && event.clientY > topConstraint
+        ){
+        activePiece.style.transform = `translate(${x}%, ${y}%)`
+      }
+    }
+  }
+
+  function dropPiece(event){
+    if (activePiece){
+      activePiece = null
+    }
+  }
+
+ 
+
   for (let y =0; y < YAxis.length; y++){
     for (let x =0; x < XAxis.length; x++){
       const coordinateNumber = y + x;
@@ -84,14 +95,14 @@ export default function ChessBoard() {
 
       pieces.forEach(piece => {
         if(piece.XPosition === x && piece.YPosition === y){
-          pieceImg = piece.pieceImg
+          pieceImg = piece.pieceImg;
         }
       })
       board.push(
         <Squares 
           key={`${y},${x}`}
           coordinateNumber={coordinateNumber} 
-          pieceImg={pieceImg} 
+          pieceImg={pieceImg}
         />
       )
     }
@@ -101,6 +112,8 @@ export default function ChessBoard() {
     onMouseDown={event => grabPiece(event)}
     onMouseMove={event=> movePiece(event)} 
     onMouseUp={event => dropPiece(event)}
+    id='chessboard'
+    ref={chessBoardRef}
   >
     {board}
   </Container>
@@ -113,4 +126,6 @@ const Container = styled.div`
   grid-template-rows: repeat(8, 58px);
   color: #854a4a;
   max-width:464px;
+  margin: 200px;
+  left: 10px;
 `
