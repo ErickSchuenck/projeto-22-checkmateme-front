@@ -40,33 +40,38 @@ for (let i = 0; i < 8; i++){
 }
 
 let activePiece = null;
+let xIni, yIni, squareSize;
 
 function grabPiece(event){
   const element = event.target;
   if (element.classList.contains('Piece')){
-    const x = event.clientX -676;
-    const y = event.clientY -338;
-    element.style.position = 'absolute';
-    element.style.left = `${x}px`
-    element.style.top = `${y}px`
+    squareSize = element.offsetWidth
+    // const x = event.clientX -676;
+    // const y = event.clientY -338;
+    // element.style.position = 'absolute';
+    // element.style.transform = `${x}px`
+    // element.style.top = `${y}px`
+    xIni = event.clientX;
+    yIni = event.clientY;
     activePiece = element;
   }
 }
 
 function movePiece(event){
   if (activePiece){
-    const x = event.clientX -676;
-    const y = event.clientY -338;
-    activePiece.style.position = 'absolute';
+    const x = 100 * (event.clientX - xIni) / squareSize;
+    const y = 100 * (event.clientY - yIni) / squareSize;
+    console.log(Math.ceil((x -50) / 100), Math.ceil((y -50) / 100))
+    // activePiece.style.position = 'absolute';
     activePiece.style.left = `${x}px`
-    activePiece.style.top = `${y}px`
+    // activePiece.style.top = `${y}px`
+    activePiece.style.transform = `translate(${x}%, ${y}%)`
   }
 }
 
 function dropPiece(event){
   if (activePiece){
     activePiece = null
-    console.log('aqui', activePiece)
   }
 }
 
@@ -84,7 +89,7 @@ export default function ChessBoard() {
       })
       board.push(
         <Squares 
-          key={`${YAxis},${XAxis}`}
+          key={`${y},${x}`}
           coordinateNumber={coordinateNumber} 
           pieceImg={pieceImg} 
         />
@@ -93,8 +98,8 @@ export default function ChessBoard() {
   }
   return(
   <Container 
-    onMouseMove={event=> movePiece(event)} 
     onMouseDown={event => grabPiece(event)}
+    onMouseMove={event=> movePiece(event)} 
     onMouseUp={event => dropPiece(event)}
   >
     {board}
