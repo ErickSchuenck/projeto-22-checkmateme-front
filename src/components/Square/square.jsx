@@ -24,12 +24,15 @@ const BlackSquare = styled.div`
   justify-content: center;
   align-items: center;
   .Piece{
-    cursor: pointer;
+    cursor: grab;
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 60px;
+  }
+  .Piece:active{
+    cursor: grabbing;
   }
 `
 
@@ -41,11 +44,14 @@ const WhiteSquare = styled.div`
   justify-content: center;
   align-items: center;
   .Piece{
-    cursor: pointer;
+    cursor: grab;
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 60px;
+  }
+  .Piece:active{
+    cursor: grabbing;
   }
 `

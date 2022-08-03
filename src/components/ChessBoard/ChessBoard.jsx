@@ -39,6 +39,38 @@ for (let i = 0; i < 8; i++){
   )
 }
 
+let activePiece = null;
+
+function grabPiece(event){
+  const element = event.target;
+  if (element.classList.contains('Piece')){
+    const x = event.clientX -676;
+    const y = event.clientY -338;
+    element.style.position = 'absolute';
+    element.style.left = `${x}px`
+    element.style.top = `${y}px`
+    activePiece = element;
+  }
+}
+
+function movePiece(event){
+  if (activePiece){
+    const x = event.clientX -676;
+    const y = event.clientY -338;
+    activePiece.style.position = 'absolute';
+    activePiece.style.left = `${x}px`
+    activePiece.style.top = `${y}px`
+  }
+}
+
+function dropPiece(event){
+  if (activePiece){
+    activePiece = null
+    console.log('aqui', activePiece)
+  }
+}
+
+
 export default function ChessBoard() {
   for (let y =0; y < YAxis.length; y++){
     for (let x =0; x < XAxis.length; x++){
@@ -60,7 +92,11 @@ export default function ChessBoard() {
     }
   }
   return(
-  <Container>
+  <Container 
+    onMouseMove={event=> movePiece(event)} 
+    onMouseDown={event => grabPiece(event)}
+    onMouseUp={event => dropPiece(event)}
+  >
     {board}
   </Container>
   )
