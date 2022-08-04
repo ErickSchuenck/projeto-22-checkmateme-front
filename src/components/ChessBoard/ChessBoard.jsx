@@ -1,48 +1,54 @@
 import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
+// import {isValidMove} from '../../Rulings/IsValidMove'
 
-// const YAxis = ['8','7','6','5','4','3','2','1']
 const XAxis = ['a','b','c','d','e','f','g','h']
 const initialBoardState = []
-// let board = []
 
 function InsertStartingPieces() {
     for(let i =0; i<2; i++){
     const color = (i === 1 ? 'White' : 'Black')
     const YPosition = (i === 0 ? 7 : 0)
-    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition})
-    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition, type: 'rook'})
+    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition, type: 'knight'})
+    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition, type: 'bishop'})
+    initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition, type: 'queen'})
+    initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition, type: 'king'})
+    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition, type: 'bishop'})
+    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition, type: 'knight'})
+    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition, type: 'rook'})
   }
   for (let i = 0; i < 8; i++){
     initialBoardState.push(
-      {
-        pieceImg: 'assets/whitePawn.png',
-        XPosition: i,
-        YPosition: 1,
-      },
-      {
-        pieceImg: 'assets/BlackPawn.png',
-        XPosition: i,
-        YPosition: 6,
-      }
+      {pieceImg: 'assets/whitePawn.png', XPosition: i, YPosition: 1, type: 'pawn'},
+      {pieceImg: 'assets/BlackPawn.png',XPosition: i, YPosition: 6, type: 'pawn'}
     )
   }
 }
-
 InsertStartingPieces()
 
+function isValidMove(previousX, previousY, newX, newY, typeOfPiece){
+  console.log('...........................................')
+  console.log('checking if move is valid...')
+  console.log('previous location', previousX, previousY)
+  console.log('new location', newX, newY)
+  console.log('type of piece', typeOfPiece)
+  console.log('...........................................')
+}
+
 export default function ChessBoard() {
+  // const [activePiece, setActivePiece] = useState(null)
+  let activePiece = null;
+  const [coordinateX, setCoordinateX] = useState(0)
+  const [coordinateY, setCoordinateY] = useState(0)
+  // const x = Math.floor((event.clientX - chessboard.offsetLeft) / 58)
+  // const y = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58  ))
+
   const [pieces, setPieces] = useState(initialBoardState)
   const [newBoard, setNewBoard] = useState(getBoardConfig())
   const chessBoardRef = useRef(null)
-  let activePiece = null;
+  
   let xIni, yIni, squareSize;
   useEffect(() => {setNewBoard(getBoardConfig)},[pieces])
 
@@ -74,11 +80,15 @@ export default function ChessBoard() {
   
   function grabPiece(event){
     const element = event.target;
+    const chessboard = chessBoardRef.current
     if (element.classList.contains('Piece')){
+      setCoordinateX(Math.floor((event.clientX - chessboard.offsetLeft) / 58))
+      setCoordinateY(Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58 )))
       squareSize = element.offsetWidth;
       xIni = event.clientX;
       yIni = event.clientY;
-      activePiece = element;  
+      // setActivePiece(element)  
+      activePiece = element
     }
   }
 
@@ -104,29 +114,24 @@ export default function ChessBoard() {
   }
 
   function dropPiece(event){
-    console.log(event)
     const chessboard = chessBoardRef.current
+    
     if (activePiece){
-      const x = Math.floor((event.clientX - chessboard.offsetLeft) / 58) // 58 is the size of each square, should be fixed magic numbers
-      const y = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58  )) // 58 is the size of each square, should be fixed magic numbers
-      console.log(x, y)
+      const newX = Math.floor((event.clientX - chessboard.offsetLeft) / 58) // 58 is the size of each square, should be fixed magic numbers
+      const newY = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58  )) // 58 is the size of each square, 464 is the size of the chessboard, should be fixed magic numbers
 
+      
       setPieces(value => {
         return value.map(
           piece => {
-          if (piece.XPosition === 1 && piece.YPosition === 0){
-            // piece.XPosition = x;
-            // piece.YPosition = y;
-            piece = {...piece, XPosition: x, YPosition: y }
-            console.log(x,y)
+          if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
+            isValidMove(coordinateX, coordinateY, newX, newY, piece.type)
+            piece = {...piece, XPosition: newX, YPosition: newY }
           }
           return piece
         })
       })
-
-      // setNewBoard(getBoardConfig())
-      
-
+      // setActivePiece(null)
       activePiece = null
     }
   }
