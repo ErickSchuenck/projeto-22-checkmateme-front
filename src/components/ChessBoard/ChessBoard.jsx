@@ -2,41 +2,41 @@ import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
 
-const YAxis = ['8','7','6','5','4','3','2','1']
+// const YAxis = ['8','7','6','5','4','3','2','1']
 const XAxis = ['a','b','c','d','e','f','g','h']
 const initialBoardState = []
-let board = []
+// let board = []
 
-for(let i =0; i<2; i++){
-  const color = (i === 0 ? 'White' : 'Black')
-  const YPosition = (i === 0 ? 7 : 0)
-  initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition})
-  initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition})
+function InsertStartingPieces() {
+    for(let i =0; i<2; i++){
+    const color = (i === 1 ? 'White' : 'Black')
+    const YPosition = (i === 0 ? 7 : 0)
+    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition})
+    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition})
+  }
+  for (let i = 0; i < 8; i++){
+    initialBoardState.push(
+      {
+        pieceImg: 'assets/whitePawn.png',
+        XPosition: i,
+        YPosition: 1,
+      },
+      {
+        pieceImg: 'assets/BlackPawn.png',
+        XPosition: i,
+        YPosition: 6,
+      }
+    )
+  }
 }
-for (let i = 0; i < 8; i++){
-  initialBoardState.push(
-    {
-      pieceImg: 'assets/BlackPawn.png',
-      XPosition: i,
-      YPosition: 1,
-    }
-  )
-}
-for (let i = 0; i < 8; i++){
-  initialBoardState.push(
-    {
-      pieceImg: 'assets/whitePawn.png',
-      XPosition: i,
-      YPosition: 6,
-    }
-  )
-}
+
+InsertStartingPieces()
 
 export default function ChessBoard() {
   const [pieces, setPieces] = useState(initialBoardState)
@@ -49,7 +49,7 @@ export default function ChessBoard() {
   function getBoardConfig(){
     const boardState = [];
 
-    for (let y =0; y < YAxis.length; y++){
+    for (let y =7; y >= 0; y--){
       for (let x =0; x < XAxis.length; x++){
         const colorOfTheSquare = y + x;
         let pieceImg;
@@ -108,7 +108,7 @@ export default function ChessBoard() {
     const chessboard = chessBoardRef.current
     if (activePiece){
       const x = Math.floor((event.clientX - chessboard.offsetLeft) / 58) // 58 is the size of each square, should be fixed magic numbers
-      const y = Math.floor((event.clientY - chessboard.offsetTop) / 58) // 58 is the size of each square, should be fixed magic numbers
+      const y = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58  )) // 58 is the size of each square, should be fixed magic numbers
       console.log(x, y)
 
       setPieces(value => {
@@ -118,7 +118,7 @@ export default function ChessBoard() {
             // piece.XPosition = x;
             // piece.YPosition = y;
             piece = {...piece, XPosition: x, YPosition: y }
-            console.log()
+            console.log(x,y)
           }
           return piece
         })
@@ -130,10 +130,6 @@ export default function ChessBoard() {
       activePiece = null
     }
   }
-
- 
-
-  
   
   return(
     <Container 
