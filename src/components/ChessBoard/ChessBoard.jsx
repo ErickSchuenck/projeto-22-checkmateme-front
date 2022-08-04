@@ -1,27 +1,26 @@
 import styled from 'styled-components';
 import Squares from '../Square/square';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const YAxis = ['8','7','6','5','4','3','2','1']
 const XAxis = ['a','b','c','d','e','f','g','h']
-const pieces = []
+const initialBoardState = []
 let board = []
 
 for(let i =0; i<2; i++){
   const color = (i === 0 ? 'White' : 'Black')
   const YPosition = (i === 0 ? 7 : 0)
-  pieces.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition})
-  pieces.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition})
-  pieces.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition})
-  pieces.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition})
-  pieces.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition})
-  pieces.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition})
-  pieces.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition})
-  pieces.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition})
+  initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition})
 }
-
 for (let i = 0; i < 8; i++){
-  pieces.push(
+  initialBoardState.push(
     {
       pieceImg: 'assets/BlackPawn.png',
       XPosition: i,
@@ -29,9 +28,8 @@ for (let i = 0; i < 8; i++){
     }
   )
 }
-
 for (let i = 0; i < 8; i++){
-  pieces.push(
+  initialBoardState.push(
     {
       pieceImg: 'assets/whitePawn.png',
       XPosition: i,
@@ -40,13 +38,40 @@ for (let i = 0; i < 8; i++){
   )
 }
 
-let activePiece = null;
-let xIni, yIni, squareSize;
-
 export default function ChessBoard() {
+  const [pieces, setPieces] = useState(initialBoardState)
+  const [newBoard, setNewBoard] = useState(getBoardConfig())
+  const chessBoardRef = useRef(null)
+  let activePiece = null;
+  let xIni, yIni, squareSize;
+  useEffect(() => {setNewBoard(getBoardConfig)},[pieces])
 
-   const chessBoardRef = useRef(null)
+  function getBoardConfig(){
+    const boardState = [];
 
+    for (let y =0; y < YAxis.length; y++){
+      for (let x =0; x < XAxis.length; x++){
+        const colorOfTheSquare = y + x;
+        let pieceImg;
+  
+        pieces.forEach(piece => {
+          if(piece.XPosition === x && piece.YPosition === y){
+            pieceImg = piece.pieceImg;
+          }
+        })
+  
+        boardState.push(
+          <Squares 
+            key={`${y},${x}`}
+            colorOfTheSquare={colorOfTheSquare} 
+            pieceImg={pieceImg}
+          />
+        )
+      }
+    }
+    return boardState
+  }
+  
   function grabPiece(event){
     const element = event.target;
     if (element.classList.contains('Piece')){
@@ -67,8 +92,6 @@ export default function ChessBoard() {
       let topConstraint = chessBoardRef.current.offsetTop;
       let bottomConstraint = chessBoardRef.current.offsetTop + chessBoardRef.current.offsetHeight;
 
-      console.log(chessBoardRef)
-
       if (
         event.clientX > leftConstraint 
         && event.clientX < rightConstraint
@@ -81,42 +104,47 @@ export default function ChessBoard() {
   }
 
   function dropPiece(event){
+    console.log(event)
+    const chessboard = chessBoardRef.current
     if (activePiece){
+      const x = Math.floor((event.clientX - chessboard.offsetLeft) / 58) // 58 is the size of each square, should be fixed magic numbers
+      const y = Math.floor((event.clientY - chessboard.offsetTop) / 58) // 58 is the size of each square, should be fixed magic numbers
+      console.log(x, y)
+
+      setPieces(value => {
+        return value.map(
+          piece => {
+          if (piece.XPosition === 1 && piece.YPosition === 0){
+            // piece.XPosition = x;
+            // piece.YPosition = y;
+            piece = {...piece, XPosition: x, YPosition: y }
+            console.log()
+          }
+          return piece
+        })
+      })
+
+      // setNewBoard(getBoardConfig())
+      
+
       activePiece = null
     }
   }
 
  
 
-  for (let y =0; y < YAxis.length; y++){
-    for (let x =0; x < XAxis.length; x++){
-      const coordinateNumber = y + x;
-      let pieceImg;
-
-      pieces.forEach(piece => {
-        if(piece.XPosition === x && piece.YPosition === y){
-          pieceImg = piece.pieceImg;
-        }
-      })
-      board.push(
-        <Squares 
-          key={`${y},${x}`}
-          coordinateNumber={coordinateNumber} 
-          pieceImg={pieceImg}
-        />
-      )
-    }
-  }
+  
+  
   return(
-  <Container 
-    onMouseDown={event => grabPiece(event)}
-    onMouseMove={event=> movePiece(event)} 
-    onMouseUp={event => dropPiece(event)}
-    id='chessboard'
-    ref={chessBoardRef}
-  >
-    {board}
-  </Container>
+    <Container 
+      onMouseDown={event => grabPiece(event)}
+      onMouseMove={event=> movePiece(event)} 
+      onMouseUp={event => dropPiece(event)}
+      id='chessboard'
+      ref={chessBoardRef}
+    >
+      {newBoard}
+    </Container>
   )
 }
 
@@ -126,6 +154,5 @@ const Container = styled.div`
   grid-template-rows: repeat(8, 58px);
   color: #854a4a;
   max-width:464px;
-  margin: 200px;
   left: 10px;
 `

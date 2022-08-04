@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-export default function Squares({coordinateNumber, pieceImg}) {
+export default function Squares({colorOfTheSquare, pieceImg}) {
     return(
-    <Square color={coordinateNumber % 2 === 0 ? 'White' : 'Black'}>
+    <Square color={colorOfTheSquare % 2 === 0 ? 'White' : 'Black'}>
       {pieceImg && <div className='Piece' style={{backgroundImage: `url(${pieceImg})`}}/>}  
     </Square>)
 }
