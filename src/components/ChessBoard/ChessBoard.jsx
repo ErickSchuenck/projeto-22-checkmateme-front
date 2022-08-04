@@ -5,36 +5,126 @@ import { useEffect, useRef, useState } from 'react';
 
 const XAxis = ['a','b','c','d','e','f','g','h']
 const initialBoardState = []
+const myColor = 'Black'
 
 function InsertStartingPieces() {
     for(let i =0; i<2; i++){
     const color = (i === 1 ? 'White' : 'Black')
     const YPosition = (i === 0 ? 7 : 0)
-    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition, type: 'rook'})
-    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition, type: 'knight'})
-    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition, type: 'bishop'})
-    initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition, type: 'queen'})
-    initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition, type: 'king'})
-    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition, type: 'bishop'})
-    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition, type: 'knight'})
-    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition, type: 'rook'})
+    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 0, YPosition, type: 'Rook', color})
+    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 1, YPosition, type: 'Knight', color})
+    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 2, YPosition, type: 'Bishop', color})
+    initialBoardState.push({pieceImg: `assets/${color}Queen.png`, XPosition: 3, YPosition, type: 'Queen', color})
+    initialBoardState.push({pieceImg: `assets/${color}King.png`, XPosition: 4, YPosition, type: 'King', color})
+    initialBoardState.push({pieceImg: `assets/${color}Bishop.png`, XPosition: 5, YPosition, type: 'Bishop', color})
+    initialBoardState.push({pieceImg: `assets/${color}Knight.png`, XPosition: 6, YPosition, type: 'Knight', color})
+    initialBoardState.push({pieceImg: `assets/${color}Rook.png`, XPosition: 7, YPosition, type: 'Rook', color})
   }
   for (let i = 0; i < 8; i++){
     initialBoardState.push(
-      {pieceImg: 'assets/whitePawn.png', XPosition: i, YPosition: 1, type: 'pawn'},
-      {pieceImg: 'assets/BlackPawn.png',XPosition: i, YPosition: 6, type: 'pawn'}
+      {pieceImg: 'assets/whitePawn.png', XPosition: i, YPosition: 1, type: 'Pawn', color: 'White'},
+      {pieceImg: 'assets/BlackPawn.png',XPosition: i, YPosition: 6, type: 'Pawn', color:'Black'}
     )
   }
 }
 InsertStartingPieces()
 
-function isValidMove(previousX, previousY, newX, newY, typeOfPiece){
+function isValidMove(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece){
+  
   console.log('...........................................')
   console.log('checking if move is valid...')
   console.log('previous location', previousX, previousY)
   console.log('new location', newX, newY)
   console.log('type of piece', typeOfPiece)
+  console.log('color of piece', colorOfPiece)
   console.log('...........................................')
+
+  // pawn rules
+  if (typeOfPiece === 'Pawn' && colorOfPiece === 'White'){
+    console.log(whitePawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor))  
+  }
+  if (typeOfPiece === 'Pawn' && colorOfPiece === 'Black'){
+    console.log(blackPawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor))
+  }
+  
+}
+
+function whitePawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor){
+  if (colorOfPiece !== myColor) {
+    console.log(`That is not your color!!!!! Your color is ${myColor} and this piece is ${colorOfPiece}`)
+    return false
+  }
+  const oneSquarePawnAdvance = ()=> {  
+        if (typeOfPiece === 'Pawn' && previousY - newY === -1 && previousX === newX){
+          console.log('white pawn advanced 1 square')
+          return true
+        } else {
+          console.log('white pawn did not advance one square')
+          return false
+        }
+    }
+
+    const twoSquaresPawnAdvance = ()=> {  
+        if (
+          typeOfPiece === 'Pawn'
+          && previousY === 1 
+          && newY === 3 
+          && previousX === newX){
+          console.log('white pawn advanced 2 squares')
+          return true
+        } else {
+          console.log('white pawn did not advanced 2 squares')
+          return false
+        }
+    }
+
+    if (oneSquarePawnAdvance() === false && twoSquaresPawnAdvance() === false){
+      console.log('INVALID MOVE!!!!!')
+      return false
+    } else {
+      console.log(oneSquarePawnAdvance(), twoSquaresPawnAdvance())
+      console.log('VALID MOVE')
+      return true
+    }
+}
+
+function blackPawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor){
+  if (colorOfPiece !== myColor) {
+    console.log(`That is not your color!!!!! Your color is ${myColor} and this piece is ${colorOfPiece}`)
+    return false
+  }
+  const oneSquarePawnAdvance = ()=> {  
+        if (typeOfPiece === 'Pawn' && previousY - newY === 1 && previousX === newX){
+          console.log('black pawn advanced 1 square')
+          return true
+        } else {
+          console.log('black pawn did not advance one square')
+          return false
+        }
+    }
+
+    const twoSquaresPawnAdvance = ()=> {  
+        if (
+          typeOfPiece === 'Pawn'
+          && previousY === 6 
+          && newY === 4 
+          && previousX === newX){
+          console.log('black pawn advanced 2 squares')
+          return true
+        } else {
+          console.log('black pawn did not advanced 2 squares')
+          return false
+        }
+    }
+
+    if (oneSquarePawnAdvance() === false && twoSquaresPawnAdvance() === false){
+      console.log('INVALID MOVE!!!!!')
+      return false
+    } else {
+      console.log(oneSquarePawnAdvance(), twoSquaresPawnAdvance())
+      console.log('VALID MOVE')
+      return true
+    }
 }
 
 export default function ChessBoard() {
@@ -125,7 +215,7 @@ export default function ChessBoard() {
         return value.map(
           piece => {
           if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
-            isValidMove(coordinateX, coordinateY, newX, newY, piece.type)
+            isValidMove(coordinateX, coordinateY, newX, newY, piece.type, piece.color)
             piece = {...piece, XPosition: newX, YPosition: newY }
           }
           return piece
