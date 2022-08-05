@@ -35,7 +35,26 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   }
 
   // Queen rulings
+  if (typeOfPiece === 'Queen') {
+    return (queenRules(previousX, previousY, newX, newY))
+  }
+
   // King rulings
+}
+
+function queenRules(previousX, previousY, newX, newY) {
+  for (let i = 0; i < 8; i++) {
+    if (Math.abs(previousX - newX) === Math.abs(previousY - newY)) {
+      return true
+    }
+  }
+  if (previousX === newX) {
+    return true
+  }
+  if (previousY === newY) {
+    return true
+  }
+  return false
 }
 
 function frontalSquareIsBlocked(previousX, previousY, boardState, colorOfPiece) {
