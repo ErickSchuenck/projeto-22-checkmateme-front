@@ -94,6 +94,11 @@ function pieceIsNotMoving(previousX, previousY, newX, newY) {
 }
 
 function bishopRules(previousX, previousY, newX, newY) {
+  for (let i = 0; i < 8; i++) {
+    if (Math.abs(previousX - newX) === Math.abs(previousY - newY)) {
+      return true
+    }
+  }
   return false
 }
 
