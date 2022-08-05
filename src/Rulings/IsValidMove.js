@@ -8,18 +8,19 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   console.log('color of piece', colorOfPiece)
   console.log('...........................................')
 
-  if (!checkForPieceColor(colorOfPiece, myColor || checkIfPieceIsNotMoving(previousX, previousY, newX, newY))) {
+  if (!checkForPieceColor(colorOfPiece, myColor || pieceIsNotMoving(previousX, previousY, newX, newY))) {
     return false
   }
 
-  // white pawn rules
-  if (typeOfPiece === 'Pawn' && colorOfPiece === 'White') {
-    return whitePawnRules(previousX, previousY, newX, newY)
-  }
-
-  // black pawn rules
-  if (typeOfPiece === 'Pawn' && colorOfPiece === 'Black') {
-    return blackPawnRules(previousX, previousY, newX, newY)
+  // Pawn rulings
+  if (typeOfPiece === 'Pawn') {
+    if (frontalSquareIsBlocked()) { return false }
+    if (colorOfPiece === 'Black') {
+      return blackPawnRules(previousX, previousY, newX, newY)
+    }
+    if (colorOfPiece === 'White') {
+      return whitePawnRules(previousX, previousY, newX, newY)
+    }
   }
 
   // Rook rulings
@@ -41,7 +42,12 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   // King rulings
 }
 
-function checkIfPieceIsNotMoving(previousX, previousY, newX, newY) {
+function frontalSquareIsBlocked() {
+  console.log('checking if front square is occupied')
+  return false
+}
+
+function pieceIsNotMoving(previousX, previousY, newX, newY) {
   if (previousX === newX && previousY && newY) {
     console.log('Previous X and new X cant be equal if previous Y and new Y are also equal')
     return false
