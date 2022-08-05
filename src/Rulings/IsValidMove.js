@@ -2,19 +2,20 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   console.log(`Hello ${myColor} player, trying to move your ${colorOfPiece} ${typeOfPiece} from ${previousX},${previousY} to ${newX},${newY}`)
 
   if (!checkForPieceColor(colorOfPiece, myColor || pieceIsNotMoving(previousX, previousY, newX, newY))) {
-    return false
+    // return false
+    // comentado por enquanto, pois ambas cores devem ser testadas
   }
 
   // Pawn rulings
   if (typeOfPiece === 'Pawn') {
-    if (frontalSquareIsBlocked(previousX, previousY, boardState)) {
+    if (frontalSquareIsBlocked(previousX, previousY, boardState, colorOfPiece)) {
       return false
     }
     if (colorOfPiece === 'Black') {
-      return blackPawnRules(previousX, previousY, newX, newY)
+      return blackPawnRules(previousX, previousY, newX, newY, boardState, colorOfPiece)
     }
     if (colorOfPiece === 'White') {
-      return whitePawnRules(previousX, previousY, newX, newY)
+      return whitePawnRules(previousX, previousY, newX, newY, boardState, colorOfPiece)
     }
   }
 
@@ -37,15 +38,51 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   // King rulings
 }
 
-function frontalSquareIsBlocked(previousX, previousY, boardState) {
-  for (let i = 0; i < boardState.length; i++) {
-    if (boardState[i].key === `${previousX},${previousY + 1}`) {
-      if (boardState[i].props.pieceImg !== undefined) {
-        console.log('invalid')
-        return true
+function frontalSquareIsBlocked(previousX, previousY, boardState, colorOfPiece) {
+  if (colorOfPiece === 'White') {
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i].key === `${previousX},${previousY + 1}`) {
+        if (boardState[i].props.pieceImg !== undefined) {
+          return true
+        }
       }
     }
   }
+
+  if (colorOfPiece === 'Black') {
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i].key === `${previousX},${previousY - 1}`) {
+        if (boardState[i].props.pieceImg !== undefined) {
+          return true
+        }
+      }
+    }
+  }
+
+  return false
+}
+
+function twoFrontalSquaresAreBlocked(previousX, previousY, boardState, colorOfPiece) {
+  if (colorOfPiece === 'White') {
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i].key === `${previousX},${previousY + 1}` || boardState[i].key === `${previousX},${previousY + 2}`) {
+        if (boardState[i].props.pieceImg !== undefined) {
+          return true
+        }
+      }
+    }
+  }
+
+  if (colorOfPiece === 'Black') {
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i].key === `${previousX},${previousY - 1}` || boardState[i].key === `${previousX},${previousY - 2}`) {
+        if (boardState[i].props.pieceImg !== undefined) {
+          return true
+        }
+      }
+    }
+  }
+
   return false
 }
 
@@ -78,7 +115,7 @@ function rookRules(previousX, previousY, newX, newY) {
   return false
 }
 
-function whitePawnRules(previousX, previousY, newX, newY) {
+function whitePawnRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
   const oneSquarePawnAdvance = () => {
     if (previousY - newY === -1 && previousX === newX) {
       return true
@@ -88,6 +125,9 @@ function whitePawnRules(previousX, previousY, newX, newY) {
   }
 
   const twoSquaresPawnAdvance = () => {
+    if (twoFrontalSquaresAreBlocked(previousX, previousY, boardState, colorOfPiece)) {
+      return false
+    }
     if (previousY === 1 && newY === 3 && previousX === newX) {
       return true
     } else {
@@ -102,7 +142,7 @@ function whitePawnRules(previousX, previousY, newX, newY) {
   }
 }
 
-function blackPawnRules(previousX, previousY, newX, newY) {
+function blackPawnRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
   const oneSquarePawnAdvance = () => {
     if (previousY - newY === 1 && previousX === newX) {
       return true
@@ -112,6 +152,9 @@ function blackPawnRules(previousX, previousY, newX, newY) {
   }
 
   const twoSquaresPawnAdvance = () => {
+    if (twoFrontalSquaresAreBlocked(previousX, previousY, boardState, colorOfPiece)) {
+      return false
+    }
     if (previousY === 6 && newY === 4 && previousX === newX) {
       return true
     } else {
@@ -122,7 +165,6 @@ function blackPawnRules(previousX, previousY, newX, newY) {
   if (oneSquarePawnAdvance() === false && twoSquaresPawnAdvance() === false) {
     return false
   } else {
-    console.log(oneSquarePawnAdvance(), twoSquaresPawnAdvance())
     return true
   }
 }
