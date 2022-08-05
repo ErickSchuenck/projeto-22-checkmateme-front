@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
-// import {isValidMove} from '../../Rulings/IsValidMove'
+import isValidMove from '../../Rulings/IsValidMove.js'
 
-const XAxis = ['a','b','c','d','e','f','g','h']
+const XAxis = ['0','1','2','3','4','5','6','7']
 const initialBoardState = []
-const myColor = 'Black'
+const myColor = 'White'
 
 function InsertStartingPieces() {
     for(let i =0; i<2; i++){
@@ -29,117 +29,18 @@ function InsertStartingPieces() {
 }
 InsertStartingPieces()
 
-function isValidMove(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece){
-  
-  console.log('...........................................')
-  console.log('checking if move is valid...')
-  console.log('previous location', previousX, previousY)
-  console.log('new location', newX, newY)
-  console.log('type of piece', typeOfPiece)
-  console.log('color of piece', colorOfPiece)
-  console.log('...........................................')
-
-  // pawn rules
-  if (typeOfPiece === 'Pawn' && colorOfPiece === 'White'){
-    console.log(whitePawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor))  
-  }
-  if (typeOfPiece === 'Pawn' && colorOfPiece === 'Black'){
-    console.log(blackPawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor))
-  }
-  
-}
-
-function whitePawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor){
-  if (colorOfPiece !== myColor) {
-    console.log(`That is not your color!!!!! Your color is ${myColor} and this piece is ${colorOfPiece}`)
-    return false
-  }
-  const oneSquarePawnAdvance = ()=> {  
-        if (typeOfPiece === 'Pawn' && previousY - newY === -1 && previousX === newX){
-          console.log('white pawn advanced 1 square')
-          return true
-        } else {
-          console.log('white pawn did not advance one square')
-          return false
-        }
-    }
-
-    const twoSquaresPawnAdvance = ()=> {  
-        if (
-          typeOfPiece === 'Pawn'
-          && previousY === 1 
-          && newY === 3 
-          && previousX === newX){
-          console.log('white pawn advanced 2 squares')
-          return true
-        } else {
-          console.log('white pawn did not advanced 2 squares')
-          return false
-        }
-    }
-
-    if (oneSquarePawnAdvance() === false && twoSquaresPawnAdvance() === false){
-      console.log('INVALID MOVE!!!!!')
-      return false
-    } else {
-      console.log(oneSquarePawnAdvance(), twoSquaresPawnAdvance())
-      console.log('VALID MOVE')
-      return true
-    }
-}
-
-function blackPawnRules(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor){
-  if (colorOfPiece !== myColor) {
-    console.log(`That is not your color!!!!! Your color is ${myColor} and this piece is ${colorOfPiece}`)
-    return false
-  }
-  const oneSquarePawnAdvance = ()=> {  
-        if (typeOfPiece === 'Pawn' && previousY - newY === 1 && previousX === newX){
-          console.log('black pawn advanced 1 square')
-          return true
-        } else {
-          console.log('black pawn did not advance one square')
-          return false
-        }
-    }
-
-    const twoSquaresPawnAdvance = ()=> {  
-        if (
-          typeOfPiece === 'Pawn'
-          && previousY === 6 
-          && newY === 4 
-          && previousX === newX){
-          console.log('black pawn advanced 2 squares')
-          return true
-        } else {
-          console.log('black pawn did not advanced 2 squares')
-          return false
-        }
-    }
-
-    if (oneSquarePawnAdvance() === false && twoSquaresPawnAdvance() === false){
-      console.log('INVALID MOVE!!!!!')
-      return false
-    } else {
-      console.log(oneSquarePawnAdvance(), twoSquaresPawnAdvance())
-      console.log('VALID MOVE')
-      return true
-    }
-}
-
 export default function ChessBoard() {
-  // const [activePiece, setActivePiece] = useState(null)
-  let activePiece = null;
+  const [activePiece, setActivePiece] = useState(null)
   const [coordinateX, setCoordinateX] = useState(0)
   const [coordinateY, setCoordinateY] = useState(0)
-  // const x = Math.floor((event.clientX - chessboard.offsetLeft) / 58)
-  // const y = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58  ))
 
   const [pieces, setPieces] = useState(initialBoardState)
   const [newBoard, setNewBoard] = useState(getBoardConfig())
   const chessBoardRef = useRef(null)
-  
-  let xIni, yIni, squareSize;
+  const [squareSize, setSquareSize] = useState(null)
+  const [XIni, setXIni] = useState(null) 
+  const [YIni, setYIni] = useState(null) 
+
   useEffect(() => {setNewBoard(getBoardConfig)},[pieces])
 
   function getBoardConfig(){
@@ -172,34 +73,36 @@ export default function ChessBoard() {
     const element = event.target;
     const chessboard = chessBoardRef.current
     if (element.classList.contains('Piece')){
-      setCoordinateX(Math.floor((event.clientX - chessboard.offsetLeft) / 58))
-      setCoordinateY(Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58 )))
-      squareSize = element.offsetWidth;
-      xIni = event.clientX;
-      yIni = event.clientY;
-      // setActivePiece(element)  
-      activePiece = element
+      setActivePiece(element)  
+      const _squareSize = element.offsetWidth
+      setSquareSize(_squareSize);
+      setCoordinateX(Math.floor((event.clientX - chessboard.offsetLeft) / _squareSize))
+      setCoordinateY(Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -(_squareSize * 8)) / _squareSize )))
+      setXIni(event.clientX);
+      setYIni(event.clientY);
     }
   }
 
   function movePiece(event){
-    if (activePiece){
-      const x = 100 * (event.clientX - xIni) / squareSize;
-      const y = 100 * (event.clientY - yIni) / squareSize;
+    if (!activePiece) { 
+      return 
+    }
+    
+    const x = 100 * (event.clientX - XIni) / squareSize;
+    const y = 100 * (event.clientY - YIni) / squareSize;
       
-      let leftConstraint = chessBoardRef.current.offsetLeft;
-      let rightConstraint = chessBoardRef.current.offsetLeft + chessBoardRef.current.offsetWidth;
-      let topConstraint = chessBoardRef.current.offsetTop;
-      let bottomConstraint = chessBoardRef.current.offsetTop + chessBoardRef.current.offsetHeight;
+    let leftConstraint = chessBoardRef.current.offsetLeft;
+    let rightConstraint = chessBoardRef.current.offsetLeft + chessBoardRef.current.offsetWidth;
+    let topConstraint = chessBoardRef.current.offsetTop;
+    let bottomConstraint = chessBoardRef.current.offsetTop + chessBoardRef.current.offsetHeight;
 
-      if (
-        event.clientX > leftConstraint 
-        && event.clientX < rightConstraint
-        && event.clientY < bottomConstraint
-        && event.clientY > topConstraint
-        ){
-        activePiece.style.transform = `translate(${x}%, ${y}%)`
-      }
+    if (
+      event.clientX > leftConstraint 
+      && event.clientX < rightConstraint
+      && event.clientY < bottomConstraint
+      && event.clientY > topConstraint
+      ){
+      activePiece.style.transform = `translate(${x}%, ${y}%)`
     }
   }
 
@@ -207,22 +110,21 @@ export default function ChessBoard() {
     const chessboard = chessBoardRef.current
     
     if (activePiece){
-      const newX = Math.floor((event.clientX - chessboard.offsetLeft) / 58) // 58 is the size of each square, should be fixed magic numbers
-      const newY = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -464) / 58  )) // 58 is the size of each square, 464 is the size of the chessboard, should be fixed magic numbers
+      const newX = Math.floor((event.clientX - chessboard.offsetLeft) / squareSize) 
+      const newY = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -8*squareSize) / squareSize))
 
       
       setPieces(value => {
         return value.map(
           piece => {
           if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
-            isValidMove(coordinateX, coordinateY, newX, newY, piece.type, piece.color)
+            isValidMove(coordinateX, coordinateY, newX, newY, piece.type, piece.color, myColor)
             piece = {...piece, XPosition: newX, YPosition: newY }
           }
           return piece
         })
       })
-      // setActivePiece(null)
-      activePiece = null
+      setActivePiece(null)
     }
   }
   
