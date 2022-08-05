@@ -39,14 +39,14 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
 
 function frontalSquareIsBlocked(previousX, previousY, boardState) {
   for (let i = 0; i < boardState.length; i++) {
-    // if (boardState[i].)
     if (boardState[i].key === `${previousX},${previousY + 1}`) {
-      console.log(boardState[i])
-      console.log(boardState[i].props.pieceImg)
+      if (boardState[i].props.pieceImg !== undefined) {
+        console.log('invalid')
+        return true
+      }
     }
   }
-  console.log('checking if front square is occupied')
-  // return true
+  return false
 }
 
 function pieceIsNotMoving(previousX, previousY, newX, newY) {

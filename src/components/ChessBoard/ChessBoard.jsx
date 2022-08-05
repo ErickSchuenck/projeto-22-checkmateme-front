@@ -58,7 +58,7 @@ export default function ChessBoard() {
   
         boardState.push(
           <Squares 
-            key={`${y},${x}`}
+            key={`${x},${y}`}
             colorOfTheSquare={colorOfTheSquare} 
             pieceImg={pieceImg}
           />
