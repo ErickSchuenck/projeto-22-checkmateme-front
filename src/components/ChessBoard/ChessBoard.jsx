@@ -33,15 +33,12 @@ export default function ChessBoard() {
   const [activePiece, setActivePiece] = useState(null)
   const [coordinateX, setCoordinateX] = useState(0)
   const [coordinateY, setCoordinateY] = useState(0)
-
   const [pieces, setPieces] = useState(initialBoardState)
   const [newBoard, setNewBoard] = useState(getBoardConfig())
   const chessBoardRef = useRef(null)
   const [squareSize, setSquareSize] = useState(null)
   const [XIni, setXIni] = useState(null) 
-  const [YIni, setYIni] = useState(null) 
-  const [XThatIsSavedToReturnPieceIfMoveIsInvalid, setXThatIsSavedToReturnPieceIfMoveIsInvalid] = useState(null) 
-  const [YThatIsSavedToReturnPieceIfMoveIsInvalid, setYThatIsSavedToReturnPieceIfMoveIsInvalid] = useState(null)
+  const [YIni, setYIni] = useState(null)
 
   useEffect(() => {setNewBoard(getBoardConfig)},[pieces])
 
@@ -120,7 +117,7 @@ export default function ChessBoard() {
         return value.map(
           piece => {
           if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
-            if(isValidMove(coordinateX, coordinateY, newX, newY, piece.type, piece.color, myColor)){
+            if(isValidMove(coordinateX, coordinateY, newX, newY, piece.type, piece.color, myColor, newBoard)){
               piece = {...piece, XPosition: newX, YPosition: newY }
             } else {
               activePiece.style.transform = `translate(0%, 0%)`
