@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import isValidMove from '../../Rulings/IsValidMove.js'
 
 const XAxis = ['0','1','2','3','4','5','6','7']
+const YAxis = ['0','1','2','3','4','5','6','7']
 const initialBoardState = []
 const myColor = 'White'
 
@@ -49,10 +50,13 @@ export default function ChessBoard() {
       for (let x =0; x < XAxis.length; x++){
         const colorOfTheSquare = y + x;
         let pieceImg;
+        let color;
   
         pieces.forEach(piece => {
           if(piece.XPosition === x && piece.YPosition === y){
             pieceImg = piece.pieceImg;
+            color = piece.color
+            
           }
         })
   
@@ -61,6 +65,7 @@ export default function ChessBoard() {
             key={`${x},${y}`}
             colorOfTheSquare={colorOfTheSquare} 
             pieceImg={pieceImg}
+            color={color}
           />
         )
       }

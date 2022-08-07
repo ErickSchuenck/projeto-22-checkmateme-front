@@ -213,7 +213,7 @@ function pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfP
   let AllowedYAxisToMove;
   colorOfPiece === 'White' ? AllowedYAxisToMove = previousY + 1 : AllowedYAxisToMove = previousY - 1
 
-  if (!isThereAPieceInTheCaptureSquare(newX, newY, boardState)) {
+  if (!isThereAPieceInTheCaptureSquare(newX, newY, boardState, colorOfPiece)) {
     return false
   }
 
@@ -223,10 +223,14 @@ function pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfP
   return false
 }
 
-function isThereAPieceInTheCaptureSquare(newX, newY, boardState) {
+function isThereAPieceInTheCaptureSquare(newX, newY, boardState, colorOfPiece) {
   for (let i = 0; i < boardState.length; i++) {
     if (boardState[i].key === `${newX},${newY}`) {
+      console.log(boardState[i].props.color)
       if (boardState[i].props.pieceImg === undefined) {
+        return false
+      }
+      if (boardState[i].props.color === colorOfPiece) {
         return false
       }
     }
