@@ -226,7 +226,6 @@ function pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfP
 function isThereAPieceInTheCaptureSquare(newX, newY, boardState, colorOfPiece) {
   for (let i = 0; i < boardState.length; i++) {
     if (boardState[i].key === `${newX},${newY}`) {
-      console.log(boardState[i].props.color)
       if (boardState[i].props.pieceImg === undefined) {
         return false
       }
