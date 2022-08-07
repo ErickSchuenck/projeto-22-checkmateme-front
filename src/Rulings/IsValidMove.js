@@ -8,6 +8,9 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
 
   // Pawn rulings
   if (typeOfPiece === 'Pawn') {
+    if (pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfPiece)) {
+      return true
+    }
     if (frontalSquareIsBlocked(previousX, previousY, boardState, colorOfPiece)) {
       return false
     }
@@ -40,6 +43,13 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   }
 
   // King rulings
+  if (typeOfPiece === 'King') {
+    return (kingRules(previousX, previousY, newX, newY))
+  }
+}
+
+function kingRules(previousX, previousY, newX, newY) {
+  return false
 }
 
 function queenRules(previousX, previousY, newX, newY) {
@@ -188,13 +198,22 @@ function blackPawnRules(previousX, previousY, newX, newY, boardState, colorOfPie
 
   if (oneSquarePawnAdvance() === false && twoSquaresPawnAdvance() === false) {
     return false
-  } else {
-    return true
   }
+
+  return true
 }
 
 function checkForPieceColor(colorOfPiece, myColor) {
   if (colorOfPiece !== myColor) {
     return false
   } return true
+}
+
+function pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
+  let AllowedYAxisToMove;
+  colorOfPiece === 'White' ? AllowedYAxisToMove = previousY + 1 : AllowedYAxisToMove = previousY - 1
+  if ((newY === AllowedYAxisToMove && newX === (previousX - 1)) || (newY === AllowedYAxisToMove && newX === (previousX + 1))) {
+    return true
+  }
+  return false
 }
