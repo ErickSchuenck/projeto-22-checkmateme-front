@@ -120,7 +120,7 @@ export default function ChessBoard() {
       const currentPiece = pieces.find(piece => piece.XPosition === coordinateX && piece.YPosition === coordinateY)
       const attackedPiece = pieces.find(piece => piece.XPosition === newX && piece.YPosition === newY)
       
-      if (isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)){
+      if (currentPiece && isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)){
         setPieces(pieces => {
           return pieces.map(
             piece => {

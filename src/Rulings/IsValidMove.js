@@ -1,9 +1,14 @@
 export default function isValidMove(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor, boardState) {
   console.log(`Hello ${myColor} player, trying to move your ${colorOfPiece} ${typeOfPiece} from ${previousX},${previousY} to ${newX},${newY}`)
 
-  if (!checkForPieceColor(colorOfPiece, myColor || pieceIsNotMoving(previousX, previousY, newX, newY))) {
+  if (!checkForPieceColor(colorOfPiece, myColor)) {
     // return false
     // comentado por enquanto, pois ambas cores devem ser testadas
+  }
+
+  if (!(pieceIsMoving(previousX, previousY, newX, newY))) {
+    console.log('piece is not moving')
+    return false
   }
 
   // Pawn rulings
@@ -24,7 +29,7 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
 
   // Rook rulings
   if (typeOfPiece === 'Rook') {
-    return rookRules(previousX, previousY, newX, newY)
+    return rookRules(previousX, previousY, newX, newY, boardState, colorOfPiece)
   }
 
   // Knight rulings
@@ -115,11 +120,12 @@ function twoFrontalSquaresAreBlocked(previousX, previousY, boardState, colorOfPi
   return false
 }
 
-function pieceIsNotMoving(previousX, previousY, newX, newY) {
-  if (previousX === newX && previousY && newY) {
+function pieceIsMoving(previousX, previousY, newX, newY) {
+  if (previousX === newX && previousY === newY) {
     return false
+  } else {
+    return true
   }
-  return true
 }
 
 function bishopRules(previousX, previousY, newX, newY) {
@@ -139,12 +145,102 @@ function knightRules(previousX, previousY, newX, newY) {
   }
 }
 
-function rookRules(previousX, previousY, newX, newY) {
+function rookRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
+
+  console.log(previousX, newX)
+  console.log(previousY, newY)
+  let movingAxis;
+
   if (previousX === newX) {
-    return true
+    movingAxis = 'Y'
   }
   if (previousY === newY) {
-    return true
+    movingAxis = 'X'
+  }
+
+  if (previousX !== newX && newY !== previousY) {
+    return false
+  }
+
+  if (movingAxis === 'X') {
+    for (let i = previousX; i < newX; i++) {
+      console.log('test')
+    }
+  }
+
+  if (RookIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis)) {
+    return false
+  }
+
+  if (RookIsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece)) {
+    return false
+  }
+
+  return true
+}
+
+function RookIsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece) {
+  for (let i = 0; i < boardState.length; i++) {
+    if (boardState[i].key === `${newX},${newY}`) {
+      if (boardState[i].props.color === colorOfPiece) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+function RookIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis) {
+  if (movingAxis === 'Y') {
+    if (previousY < newY) {
+      for (let y = previousY + 1; y < newY; y++) {
+        for (let i = 0; i < boardState.length; i++) {
+          if (boardState[i].key === `${previousX},${y}`) {
+            if (boardState[i].props.pieceImg !== undefined) {
+              return true
+            }
+          }
+        }
+      }
+    }
+
+    if (newY < previousY) {
+      for (let y = previousY - 1; y > newY; y--) {
+        for (let i = 0; i < boardState.length; i++) {
+          if (boardState[i].key === `${previousX},${y}`) {
+            if (boardState[i].props.pieceImg !== undefined) {
+              return true
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (movingAxis === 'X') {
+    if (previousX < newX) {
+      for (let x = previousX + 1; x < newX; x++) {
+        for (let i = 0; i < boardState.length; i++) {
+          if (boardState[i].key === `${x},${previousY}`) {
+            if (boardState[i].props.pieceImg !== undefined) {
+              return true
+            }
+          }
+        }
+      }
+    }
+
+    if (newX < previousX) {
+      for (let x = previousX - 1; x > newX; x--) {
+        for (let i = 0; i < boardState.length; i++) {
+          if (boardState[i].key === `${x},${previousY}`) {
+            if (boardState[i].props.pieceImg !== undefined) {
+              return true
+            }
+          }
+        }
+      }
+    }
   }
   return false
 }
@@ -213,7 +309,7 @@ function pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfP
   let AllowedYAxisToMove;
   colorOfPiece === 'White' ? AllowedYAxisToMove = previousY + 1 : AllowedYAxisToMove = previousY - 1
 
-  if (!isThereAPieceInTheCaptureSquare(newX, newY, boardState, colorOfPiece)) {
+  if (!isThereAPieceInThePawnCaptureSquare(newX, newY, boardState, colorOfPiece)) {
     return false
   }
 
@@ -223,7 +319,7 @@ function pawnCaptureRules(previousX, previousY, newX, newY, boardState, colorOfP
   return false
 }
 
-function isThereAPieceInTheCaptureSquare(newX, newY, boardState, colorOfPiece) {
+function isThereAPieceInThePawnCaptureSquare(newX, newY, boardState, colorOfPiece) {
   for (let i = 0; i < boardState.length; i++) {
     if (boardState[i].key === `${newX},${newY}`) {
       if (boardState[i].props.pieceImg === undefined) {
