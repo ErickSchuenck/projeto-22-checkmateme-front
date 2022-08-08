@@ -34,17 +34,17 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
 
   // Knight rulings
   if (typeOfPiece === 'Knight') {
-    return knightRules(previousX, previousY, newX, newY)
+    return knightRules(previousX, previousY, newX, newY, boardState)
   }
 
   // Bishop rulings
   if (typeOfPiece === 'Bishop') {
-    return (bishopRules(previousX, previousY, newX, newY))
+    return (bishopRules(previousX, previousY, newX, newY, boardState))
   }
 
   // Queen rulings
   if (typeOfPiece === 'Queen') {
-    return (queenRules(previousX, previousY, newX, newY))
+    return (queenRules(previousX, previousY, newX, newY, boardState))
   }
 
   // King rulings
@@ -57,19 +57,40 @@ function kingRules(previousX, previousY, newX, newY) {
   return false
 }
 
-function queenRules(previousX, previousY, newX, newY) {
-  for (let i = 0; i < 8; i++) {
-    if (Math.abs(previousX - newX) === Math.abs(previousY - newY)) {
-      return true
+function queenRules(previousX, previousY, newX, newY, boardState) {
+  let movingAxis;
+  let queenIsMovingOnRowsOrColumns = false;
+  const movingDiagonal = checkWhatKindOfDiagonalThisIs(previousX, newX, previousY, newY)
+
+  if (previousX === newX) {
+    movingAxis = 'Y'
+    queenIsMovingOnRowsOrColumns = true
+    if (RookOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis)) {
+      return false
+    }
+    return true
+  }
+
+  if (previousY === newY) {
+    queenIsMovingOnRowsOrColumns = true
+    movingAxis = 'X'
+    if (RookOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis)) {
+      return false
+    }
+    return true
+  }
+
+  if (queenIsMovingOnRowsOrColumns === false) {
+    if (isADiagonal(previousX, previousY, newX, newY) === false) {
+      return false
+    }
+
+    if (BishopOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingDiagonal)) {
+      return false
     }
   }
-  if (previousX === newX) {
-    return true
-  }
-  if (previousY === newY) {
-    return true
-  }
-  return false
+
+  return true
 }
 
 function frontalSquareIsBlocked(previousX, previousY, boardState, colorOfPiece) {
@@ -128,8 +149,111 @@ function pieceIsMoving(previousX, previousY, newX, newY) {
   }
 }
 
-function bishopRules(previousX, previousY, newX, newY) {
-  for (let i = 0; i < 8; i++) {
+function bishopRules(previousX, previousY, newX, newY, boardState) {
+  const movingDiagonal = checkWhatKindOfDiagonalThisIs(previousX, newX, previousY, newY);
+
+  if (!(isADiagonal(previousX, previousY, newX, newY))) {
+    return false
+  }
+
+  if ((BishopOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingDiagonal))) {
+    return false
+  }
+
+  return true
+}
+
+function BishopOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingDiagonal) {
+  console.log(movingDiagonal)
+  const sumOfPreviousXandY = previousX + previousY
+  const previousXDecreasedByPreviousY = previousX - previousY
+
+  if (movingDiagonal === 'upperLeft') {
+    for (let x = newX + 1; x < previousX; x++) {
+      for (let y = newY - 1; y > previousY; y--) {
+        if (x + y === sumOfPreviousXandY) {
+          for (let i = 0; i < boardState.length; i++) {
+            if (boardState[i].key === `${x},${y}`) {
+              if (boardState[i].props.pieceImg !== undefined) {
+                return true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (movingDiagonal === 'upperRight') {
+    for (let x = newX - 1; x > previousX; x--) {
+      for (let y = newY - 1; y > previousY; y--) {
+        if (x - y === previousXDecreasedByPreviousY) {
+          for (let i = 0; i < boardState.length; i++) {
+            if (boardState[i].key === `${x},${y}`) {
+              if (boardState[i].props.pieceImg !== undefined) {
+                return true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (movingDiagonal === 'lowerLeft') {
+    for (let x = newX + 1; x < previousX; x++) {
+      for (let y = newY + 1; y < previousY; y++) {
+        if (x - y === previousXDecreasedByPreviousY) {
+          for (let i = 0; i < boardState.length; i++) {
+            if (boardState[i].key === `${x},${y}`) {
+              if (boardState[i].props.pieceImg !== undefined) {
+                return true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (movingDiagonal === 'lowerRight') {
+    for (let x = newX - 1; x > previousX; x--) {
+      for (let y = newY + 1; y < previousY; y++) {
+        if (x + y === sumOfPreviousXandY) {
+          for (let i = 0; i < boardState.length; i++) {
+            if (boardState[i].key === `${x},${y}`) {
+              if (boardState[i].props.pieceImg !== undefined) {
+                return true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return false
+}
+
+function checkWhatKindOfDiagonalThisIs(previousX, newX, previousY, newY) {
+  if (previousX < newX && previousY < newY) {
+    return 'upperRight'
+  }
+
+  if (newX < previousX && previousY < newY) {
+    return 'upperLeft'
+  }
+
+  if (newX < previousX && newY < previousY) {
+    return 'lowerLeft'
+  }
+
+  if (previousX < newX && newY < previousY) {
+    return 'lowerRight'
+  }
+}
+
+function isADiagonal(previousX, previousY, newX, newY) {
+  for (let i = 0; i <= 7; i++) {
     if (Math.abs(previousX - newX) === Math.abs(previousY - newY)) {
       return true
     }
@@ -146,9 +270,6 @@ function knightRules(previousX, previousY, newX, newY) {
 }
 
 function rookRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
-
-  console.log(previousX, newX)
-  console.log(previousY, newY)
   let movingAxis;
 
   if (previousX === newX) {
@@ -168,7 +289,7 @@ function rookRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
     }
   }
 
-  if (RookIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis)) {
+  if (RookOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis)) {
     return false
   }
 
@@ -190,7 +311,7 @@ function RookIsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece) 
   return false
 }
 
-function RookIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis) {
+function RookOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis) {
   if (movingAxis === 'Y') {
     if (previousY < newY) {
       for (let y = previousY + 1; y < newY; y++) {
