@@ -270,12 +270,19 @@ function isADiagonal(previousX, previousY, newX, newY) {
   return false
 }
 
-function knightRules(previousX, previousY, newX, newY) {
-  if ((Math.abs(previousX - newX) === 1 && Math.abs(previousY - newY) === 2) || (Math.abs(previousX - newX) === 2 && Math.abs(previousY - newY) === 1)) {
-    return true
-  } else {
+function knightRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
+  const twoSquaresSidewaysAndOneVertical = Math.abs(previousX - newX) === 2 && Math.abs(previousY - newY) === 1
+  const twoSquaresVerticalAndOneSideways = Math.abs(previousX - newX) === 1 && Math.abs(previousY - newY) === 2
+
+  if (IsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece)) {
     return false
   }
+
+  if (!(twoSquaresSidewaysAndOneVertical || twoSquaresVerticalAndOneSideways)) {
+    return false
+  }
+
+  return true
 }
 
 function rookRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
