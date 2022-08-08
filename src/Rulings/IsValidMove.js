@@ -34,22 +34,22 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
 
   // Knight rulings
   if (typeOfPiece === 'Knight') {
-    return knightRules(previousX, previousY, newX, newY, boardState)
+    return knightRules(previousX, previousY, newX, newY, boardState, colorOfPiece)
   }
 
   // Bishop rulings
   if (typeOfPiece === 'Bishop') {
-    return (bishopRules(previousX, previousY, newX, newY, boardState))
+    return (bishopRules(previousX, previousY, newX, newY, boardState, colorOfPiece))
   }
 
   // Queen rulings
   if (typeOfPiece === 'Queen') {
-    return (queenRules(previousX, previousY, newX, newY, boardState))
+    return (queenRules(previousX, previousY, newX, newY, boardState, colorOfPiece))
   }
 
   // King rulings
   if (typeOfPiece === 'King') {
-    return (kingRules(previousX, previousY, newX, newY))
+    return (kingRules(previousX, previousY, newX, newY, boardState, colorOfPiece))
   }
 }
 
@@ -57,10 +57,14 @@ function kingRules(previousX, previousY, newX, newY) {
   return false
 }
 
-function queenRules(previousX, previousY, newX, newY, boardState) {
+function queenRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
   let movingAxis;
   let queenIsMovingOnRowsOrColumns = false;
   const movingDiagonal = checkWhatKindOfDiagonalThisIs(previousX, newX, previousY, newY)
+
+  if (IsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece)) {
+    return false
+  }
 
   if (previousX === newX) {
     movingAxis = 'Y'
@@ -89,6 +93,8 @@ function queenRules(previousX, previousY, newX, newY, boardState) {
       return false
     }
   }
+
+
 
   return true
 }
@@ -149,7 +155,7 @@ function pieceIsMoving(previousX, previousY, newX, newY) {
   }
 }
 
-function bishopRules(previousX, previousY, newX, newY, boardState) {
+function bishopRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
   const movingDiagonal = checkWhatKindOfDiagonalThisIs(previousX, newX, previousY, newY);
 
   if (!(isADiagonal(previousX, previousY, newX, newY))) {
@@ -160,11 +166,14 @@ function bishopRules(previousX, previousY, newX, newY, boardState) {
     return false
   }
 
+  if (IsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece)) {
+    return false
+  }
+
   return true
 }
 
 function BishopOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingDiagonal) {
-  console.log(movingDiagonal)
   const sumOfPreviousXandY = previousX + previousY
   const previousXDecreasedByPreviousY = previousX - previousY
 
@@ -283,24 +292,18 @@ function rookRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
     return false
   }
 
-  if (movingAxis === 'X') {
-    for (let i = previousX; i < newX; i++) {
-      console.log('test')
-    }
-  }
-
   if (RookOrQueenIsCollidingWithAPiece(previousX, previousY, newX, newY, boardState, movingAxis)) {
     return false
   }
 
-  if (RookIsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece)) {
+  if (IsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece)) {
     return false
   }
 
   return true
 }
 
-function RookIsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece) {
+function IsCapturingAPieceOfSameColor(newX, newY, boardState, colorOfPiece) {
   for (let i = 0; i < boardState.length; i++) {
     if (boardState[i].key === `${newX},${newY}`) {
       if (boardState[i].props.color === colorOfPiece) {
