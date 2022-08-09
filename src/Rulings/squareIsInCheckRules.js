@@ -8,12 +8,39 @@ export function squareIsInCheck(newX, newY, boardState, colorOfPiece) {
     squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'UpperLeft') ||
     squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'UpperRight') ||
     squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'LowerLeft') ||
-    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'LowerRight')
+    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'LowerRight') ||
+    squareIsBeingCheckedByAKnight(newX, newY, boardState, colorOfPiece)
   ) {
     return true
   }
 
   else return false
+}
+
+function squareIsBeingCheckedByAKnight(newX, newY, boardState, colorOfPiece) {
+  let opponentsColor;
+  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+
+  for (let i = 0; i < boardState.length; i++) {
+    const piece = boardState[i].props.type
+    const color = boardState[i].props.color
+    if (
+      boardState[i].key === `${newX + 2},${newY + 1}` ||
+      boardState[i].key === `${newX + 2},${newY - 1}` ||
+      boardState[i].key === `${newX + 1},${newY + 2}` ||
+      boardState[i].key === `${newX + 1},${newY - 2}` ||
+      boardState[i].key === `${newX - 1},${newY + 2}` ||
+      boardState[i].key === `${newX - 1},${newY - 2}` ||
+      boardState[i].key === `${newX - 2},${newY + 1}` ||
+      boardState[i].key === `${newX - 2},${newY - 1}`
+    ) {
+      if (piece === 'Knight' && color === opponentsColor) {
+        return true
+      }
+    }
+  }
+
+  return false
 }
 
 function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, direction) {
