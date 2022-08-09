@@ -28,6 +28,7 @@ function InsertStartingPieces() {
     )
   }
 }
+
 InsertStartingPieces()
 
 export default function ChessBoard() {
@@ -122,11 +123,45 @@ export default function ChessBoard() {
       
       const currentPiece = pieces.find(piece => piece.XPosition === coordinateX && piece.YPosition === coordinateY)
       const attackedPiece = pieces.find(piece => piece.XPosition === newX && piece.YPosition === newY)
+      const validMove = isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)
       
-      
+      if (currentPiece && validMove){
+        console.log(currentPiece.type)
+        console.log(currentPiece.color)
+        console.log(newY)
 
-      if (currentPiece && isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)){
-        setPieces(pieces => {
+        if (isAPromotionMoviment(currentPiece, newY)){
+          promotePawn(attackedPiece, newX, newY)
+        } else {
+          updateBoard(attackedPiece, newX, newY)
+        }
+      } else {
+        resetPiece(activePiece)
+      }
+      setActivePiece(null)
+    }
+  }
+
+  function isAPromotionMoviment(currentPiece, newY){
+    if (currentPiece.type === 'Pawn'){
+      if ( currentPiece.color === 'White' && newY === 7){
+        return true
+      }
+
+      if ( currentPiece.color === 'Black' && newY === 0){
+        return true
+      }
+    }
+    
+    return false
+  }
+
+  function resetPiece(activePiece){
+    activePiece.style.transform = `translate(0%, 0%)`
+  }
+
+  function updateBoard(attackedPiece, newX, newY){
+    setPieces(pieces => {
           return pieces.map(
             piece => {
             if (piece === attackedPiece){
@@ -141,12 +176,26 @@ export default function ChessBoard() {
             return piece
           })
         })
-      } else {
-        activePiece.style.transform = `translate(0%, 0%)`
-      }
+  }
 
-      setActivePiece(null)
-    }
+  function promotePawn(attackedPiece, newX, newY){
+    setPieces(pieces => {
+      return pieces.map(
+        piece => {
+          if (piece === attackedPiece){
+              piece = {...piece, XPosition: null, YPosition: null }
+              return piece
+          }
+            
+          if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
+              const color = piece.color
+              piece = {...piece, XPosition: newX, YPosition: newY, type: 'Queen', pieceImg: `assets/${color}Queen.png`}
+          }
+
+         return piece
+        }
+      )
+    })
   }
   
   return(
