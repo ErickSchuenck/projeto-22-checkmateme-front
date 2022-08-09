@@ -1,15 +1,22 @@
 export function squareIsInCheck(newX, newY, boardState, colorOfPiece) {
 
+  let opponentsColor;
+  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+
   if (
-    squareIsBeingCheckedByItsRows(newX, newY, boardState, colorOfPiece, 'Left') ||
-    squareIsBeingCheckedByItsRows(newX, newY, boardState, colorOfPiece, 'Right') ||
-    squareIsBeingCheckedByItsColumns(newX, newY, boardState, colorOfPiece, 'Upper') ||
-    squareIsBeingCheckedByItsColumns(newX, newY, boardState, colorOfPiece, 'Lower') ||
-    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'UpperLeft') ||
-    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'UpperRight') ||
-    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'LowerLeft') ||
-    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, 'LowerRight') ||
-    squareIsBeingCheckedByAKnight(newX, newY, boardState, colorOfPiece)
+    squareIsBeingCheckedByItsRows(newX, newY, boardState, opponentsColor, 'Left') ||
+    squareIsBeingCheckedByItsRows(newX, newY, boardState, opponentsColor, 'Right') ||
+
+    squareIsBeingCheckedByItsColumns(newX, newY, boardState, opponentsColor, 'Upper') ||
+    squareIsBeingCheckedByItsColumns(newX, newY, boardState, opponentsColor, 'Lower') ||
+
+    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsColor, 'UpperLeft') ||
+    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsColor, 'UpperRight') ||
+    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsColor, 'LowerLeft') ||
+    squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsColor, 'LowerRight') ||
+
+    squareIsBeingCheckedByAKnight(newX, newY, boardState, opponentsColor) ||
+    squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor)
   ) {
     return true
   }
@@ -17,10 +24,33 @@ export function squareIsInCheck(newX, newY, boardState, colorOfPiece) {
   else return false
 }
 
-function squareIsBeingCheckedByAKnight(newX, newY, boardState, colorOfPiece) {
-  let opponentsColor;
-  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+function squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor) {
 
+  for (let i = 0; i < boardState.length; i++) {
+    const piece = boardState[i].props.type
+    const color = boardState[i].props.color
+
+    if (
+      boardState[i].key === `${newX + 1},${newY}` ||
+      boardState[i].key === `${newX - 1},${newY}` ||
+      boardState[i].key === `${newX - 1},${newY - 1}` ||
+      boardState[i].key === `${newX + 1},${newY + 1}` ||
+      boardState[i].key === `${newX - 1},${newY - 1}` ||
+      boardState[i].key === `${newX - 1},${newY + 1}` ||
+      boardState[i].key === `${newX + 1},${newY - 1}` ||
+      boardState[i].key === `${newX},${newY - 1}` ||
+      boardState[i].key === `${newX},${newY + 1}`
+    ) {
+      if (piece === 'King' && color === opponentsColor) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+function squareIsBeingCheckedByAKnight(newX, newY, boardState, opponentsColor) {
   for (let i = 0; i < boardState.length; i++) {
     const piece = boardState[i].props.type
     const color = boardState[i].props.color
@@ -43,9 +73,7 @@ function squareIsBeingCheckedByAKnight(newX, newY, boardState, colorOfPiece) {
   return false
 }
 
-function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, direction) {
-  let opponentsColor;
-  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsColor, direction) {
 
   for (let i = 1; i <= 7; i++) {
     let y;
@@ -87,9 +115,7 @@ function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece
   return false
 }
 
-function squareIsBeingCheckedByItsColumns(newX, newY, boardState, colorOfPiece, direction) {
-  let opponentsColor;
-  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+function squareIsBeingCheckedByItsColumns(newX, newY, boardState, opponentsColor, direction) {
 
   for (let i = 1; i <= 7; i++) {
     let y;
@@ -119,9 +145,7 @@ function squareIsBeingCheckedByItsColumns(newX, newY, boardState, colorOfPiece, 
   return false
 }
 
-function squareIsBeingCheckedByItsRows(newX, newY, boardState, colorOfPiece, direction) {
-  let opponentsColor;
-  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+function squareIsBeingCheckedByItsRows(newX, newY, boardState, opponentsColor, direction) {
 
   for (let i = 1; i <= 7; i++) {
     let x;
