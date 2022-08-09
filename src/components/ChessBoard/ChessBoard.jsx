@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
-import isValidMove from '../../Rulings/IsValidMove.js'
+import isValidMove from '../../Rulings/index.js'
 
 const XAxis = ['0','1','2','3','4','5','6','7']
 const YAxis = ['0','1','2','3','4','5','6','7']
