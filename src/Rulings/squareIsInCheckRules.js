@@ -33,8 +33,8 @@ function squareIsBeingCheckedByAPawn(newX, newY, boardState, opponentsColor) {
       const piece = boardState[i].props.type
       const color = boardState[i].props.color
 
-      if (boardState[i].key === `${newX - 1},${newY - 1}` ||
-        boardState[i].key === `${newX + 1},${newY - 1}`) {
+      if (boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY) - 1}` ||
+        boardState[i].key === `${parseInt(newX) + 1},${parseInt(newY) - 1}`) {
         if (piece === 'Pawn' && color === opponentsColor) {
           return true
         }
@@ -69,15 +69,15 @@ function squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor) {
     const color = boardState[i].props.color
 
     if (
-      boardState[i].key === `${newX + 1},${newY}` ||
-      boardState[i].key === `${newX - 1},${newY}` ||
-      boardState[i].key === `${newX - 1},${newY - 1}` ||
-      boardState[i].key === `${newX + 1},${newY + 1}` ||
-      boardState[i].key === `${newX - 1},${newY - 1}` ||
-      boardState[i].key === `${newX - 1},${newY + 1}` ||
-      boardState[i].key === `${newX + 1},${newY - 1}` ||
-      boardState[i].key === `${newX},${newY - 1}` ||
-      boardState[i].key === `${newX},${newY + 1}`
+      boardState[i].key === `${parseInt(newX) + 1},${parseInt(newY)}` ||
+      boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY)}` ||
+      boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY) - 1}` ||
+      boardState[i].key === `${parseInt(newX) + 1},${parseInt(newY) + 1}` ||
+      boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY) - 1}` ||
+      boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY) + 1}` ||
+      boardState[i].key === `${parseInt(newX) + 1},${parseInt(newY) - 1}` ||
+      boardState[i].key === `${parseInt(newX)},${parseInt(newY) - 1}` ||
+      boardState[i].key === `${parseInt(newX)},${parseInt(newY) + 1}`
     ) {
       if (piece === 'King' && color === opponentsColor) {
         return true
@@ -89,18 +89,19 @@ function squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor) {
 }
 
 function squareIsBeingCheckedByAKnight(newX, newY, boardState, opponentsColor) {
+
   for (let i = 0; i < boardState.length; i++) {
     const piece = boardState[i].props.type
     const color = boardState[i].props.color
     if (
-      boardState[i].key === `${newX + 2},${newY + 1}` ||
-      boardState[i].key === `${newX + 2},${newY - 1}` ||
-      boardState[i].key === `${newX + 1},${newY + 2}` ||
-      boardState[i].key === `${newX + 1},${newY - 2}` ||
-      boardState[i].key === `${newX - 1},${newY + 2}` ||
-      boardState[i].key === `${newX - 1},${newY - 2}` ||
-      boardState[i].key === `${newX - 2},${newY + 1}` ||
-      boardState[i].key === `${newX - 2},${newY - 1}`
+      boardState[i].key === `${parseInt(newX) + 2},${parseInt(newY) + 1}` ||
+      boardState[i].key === `${parseInt(newX) + 2},${parseInt(newY) - 1}` ||
+      boardState[i].key === `${parseInt(newX) + 1},${parseInt(newY) + 2}` ||
+      boardState[i].key === `${parseInt(newX) + 1},${parseInt(newY) - 2}` ||
+      boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY) + 2}` ||
+      boardState[i].key === `${parseInt(newX) - 1},${parseInt(newY) - 2}` ||
+      boardState[i].key === `${parseInt(newX) - 2},${parseInt(newY) + 1}` ||
+      boardState[i].key === `${parseInt(newX) - 2},${parseInt(newY) - 1}`
     ) {
       if (piece === 'Knight' && color === opponentsColor) {
         return true
@@ -118,23 +119,23 @@ function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsCol
     let x;
 
     if (direction === 'UpperRight') {
-      x = newX + i
-      y = newY + i
+      x = parseInt(newX) + i
+      y = parseInt(newY) + i
     }
 
     if (direction === 'LowerLeft') {
-      x = newX - i
-      y = newY - i
+      x = parseInt(newX) - i
+      y = parseInt(newY) - i
     }
 
     if (direction === 'UpperLeft') {
-      x = newX - i
-      y = newY + i
+      x = parseInt(newX) - i
+      y = parseInt(newY) + i
     }
 
     if (direction === 'LowerRight') {
-      x = newX + i
-      y = newY - i
+      x = parseInt(newX) + i
+      y = parseInt(newY) - i
     }
 
     const pieceType = squareIsOccupiedBy(x, y, boardState).type
@@ -160,11 +161,11 @@ function squareIsBeingCheckedByItsColumns(newX, newY, boardState, opponentsColor
     let x = newX;
 
     if (direction === 'Lower') {
-      y = newY - i
+      y = parseInt(newY) - i
     }
 
     if (direction === 'Upper') {
-      y = newY + i
+      y = parseInt(newY) + i
     }
 
     const pieceType = squareIsOccupiedBy(x, y, boardState).type
@@ -187,16 +188,15 @@ function squareIsBeingCheckedByItsRows(newX, newY, boardState, opponentsColor, d
 
   for (let i = 1; i <= 7; i++) {
     let x;
+    let y = parseInt(newY)
 
     if (direction === 'Left') {
-      x = newX - i
+      x = parseInt(newX) - i
     }
 
     if (direction === 'Right') {
-      x = newX + i
+      x = parseInt(newX) + i
     }
-
-    let y = newY
 
     const pieceType = squareIsOccupiedBy(x, y, boardState).type
     const pieceColor = squareIsOccupiedBy(x, y, boardState).color

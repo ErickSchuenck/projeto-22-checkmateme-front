@@ -27,6 +27,7 @@ export function kingRules(previousX, previousY, newX, newY, boardState, colorOfP
   }
 
   if (squareIsInCheck(newX, newY, boardState, colorOfPiece)) {
+    console.log('this square is in check')
     return false
   }
 
@@ -76,4 +77,26 @@ function isMovingSingleSquareInRowOrColumn(movingAxis, previousX, newX, previous
   }
 
   return true
+}
+
+export function kingIsInCheck(colorOfPiece, boardState) {
+  let x;
+  let y;
+
+  for (let i = 0; i < boardState.length; i++) {
+    const type = boardState[i].props.type
+    const color = boardState[i].props.color
+
+    if (type === 'King' && color === colorOfPiece) {
+      x = boardState[i].key[0]
+      y = boardState[i].key[2]
+
+      if (squareIsInCheck(x, y, boardState, colorOfPiece)) {
+        console.log(`${colorOfPiece} king is in check`)
+        return true
+      }
+    }
+  }
+  console.log(`${colorOfPiece} king is not in check`)
+  return false
 }

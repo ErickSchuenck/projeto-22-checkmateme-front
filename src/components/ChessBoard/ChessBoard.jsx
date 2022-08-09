@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
 import isValidMove from '../../Rulings/index.js'
-import { type } from '@testing-library/user-event/dist/type';
 
 const XAxis = ['0','1','2','3','4','5','6','7']
 const YAxis = ['0','1','2','3','4','5','6','7']
@@ -124,6 +123,8 @@ export default function ChessBoard() {
       const currentPiece = pieces.find(piece => piece.XPosition === coordinateX && piece.YPosition === coordinateY)
       const attackedPiece = pieces.find(piece => piece.XPosition === newX && piece.YPosition === newY)
       
+      
+
       if (currentPiece && isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)){
         setPieces(pieces => {
           return pieces.map(
@@ -142,7 +143,8 @@ export default function ChessBoard() {
         })
       } else {
         activePiece.style.transform = `translate(0%, 0%)`
-      }      
+      }
+
       setActivePiece(null)
     }
   }

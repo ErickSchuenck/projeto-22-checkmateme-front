@@ -2,10 +2,11 @@ import { pawnRules } from "./pawnRules"
 import { rookRules } from "./rookRules"
 import { knightRules } from "./knightRules"
 import { bishopRules } from "./bishopRules"
-import { kingRules } from "./kingRules"
+import { kingRules, kingIsInCheck } from "./kingRules"
 import { queenRules } from "./queenRules"
 
 export default function isValidMove(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor, boardState) {
+
   console.log(`Hello ${myColor} player, trying to move your ${colorOfPiece} ${typeOfPiece} from ${previousX},${previousY} to ${newX},${newY}`)
 
   if (!checkForPieceColor(colorOfPiece, myColor)) {
@@ -17,6 +18,10 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
     console.log('piece is not moving')
     return false
   }
+
+  // if (kingIsInCheck(colorOfPiece, boardState)) {
+  //   return false
+  // }
 
   if (typeOfPiece === 'Pawn') {
     return pawnRules(previousX, previousY, newX, newY, boardState, colorOfPiece)
