@@ -17,35 +17,47 @@ export function squareIsInCheck(newX, newY, boardState, colorOfPiece) {
 }
 
 function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, colorOfPiece, direction) {
-  // let opponentsColor;
-  // colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
+  let opponentsColor;
+  colorOfPiece === 'White' ? opponentsColor = 'Black' : opponentsColor = 'White'
 
-  // for (let i = 1; i <= 7; i++) {
-  //   let y;
-  //   let x = newX;
+  for (let i = 1; i <= 7; i++) {
+    let y;
+    let x;
 
-  //   if (direction === 'Lower') {
-  //     y = newY - i
-  //   }
+    if (direction === 'UpperRight') {
+      x = newX + i
+      y = newY + i
+    }
 
-  //   if (direction === 'Upper') {
-  //     y = newY + i
-  //   }
+    if (direction === 'LowerLeft') {
+      x = newX - i
+      y = newY - i
+    }
 
-  //   const pieceType = squareIsOccupiedBy(x, y, boardState).type
-  //   const pieceColor = squareIsOccupiedBy(x, y, boardState).color
+    if (direction === 'UpperLeft') {
+      x = newX - i
+      y = newY + i
+    }
 
-  //   if (pieceType !== undefined) {
-  //     if (pieceColor === opponentsColor) {
-  //       if (pieceType === 'Rook' || pieceType === 'Queen') {
-  //         return true
-  //       }
-  //     }
-  //     return false
-  //   }
-  // }
+    if (direction === 'LowerRight') {
+      x = newX - i
+      y = newY + i
+    }
 
-  // return false
+    const pieceType = squareIsOccupiedBy(x, y, boardState).type
+    const pieceColor = squareIsOccupiedBy(x, y, boardState).color
+
+    if (pieceType !== undefined) {
+      if (pieceColor === opponentsColor) {
+        if (pieceType === 'Bishop' || pieceType === 'Queen') {
+          return true
+        }
+      }
+      return false
+    }
+  }
+
+  return false
 }
 
 function squareIsBeingCheckedByItsColumns(newX, newY, boardState, colorOfPiece, direction) {
