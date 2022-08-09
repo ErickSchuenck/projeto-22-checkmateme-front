@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
 import isValidMove from '../../Rulings/index.js'
+import { type } from '@testing-library/user-event/dist/type';
 
 const XAxis = ['0','1','2','3','4','5','6','7']
 const YAxis = ['0','1','2','3','4','5','6','7']
@@ -51,12 +52,13 @@ export default function ChessBoard() {
         const colorOfTheSquare = y + x;
         let pieceImg;
         let color;
+        let type;
   
         pieces.forEach(piece => {
           if(piece.XPosition === x && piece.YPosition === y){
             pieceImg = piece.pieceImg;
             color = piece.color
-            
+            type = piece.type
           }
         })
   
@@ -66,10 +68,12 @@ export default function ChessBoard() {
             colorOfTheSquare={colorOfTheSquare} 
             pieceImg={pieceImg}
             color={color}
+            type={type}
           />
         )
       }
     }
+    
     return boardState
   }
   

@@ -1,3 +1,4 @@
+import { squareIsInCheck } from "./squareIsInCheckRules";
 import { IsCapturingAPieceOfSameColor, isADiagonal, checkWhatKindOfDiagonalThisIs, isARowOrColumn, checkIfAxisIsXOrY } from "./utils";
 
 export function kingRules(previousX, previousY, newX, newY, boardState, colorOfPiece) {
@@ -22,6 +23,10 @@ export function kingRules(previousX, previousY, newX, newY, boardState, colorOfP
   }
 
   if (!(isADiagonal(previousX, previousY, newX, newY)) && !(isARowOrColumn(previousX, previousY, newX, newY))) {
+    return false
+  }
+
+  if (squareIsInCheck(newX, newY, boardState, colorOfPiece)) {
     return false
   }
 
