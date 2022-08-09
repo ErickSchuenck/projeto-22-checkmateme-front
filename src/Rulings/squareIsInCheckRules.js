@@ -16,12 +16,50 @@ export function squareIsInCheck(newX, newY, boardState, colorOfPiece) {
     squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsColor, 'LowerRight') ||
 
     squareIsBeingCheckedByAKnight(newX, newY, boardState, opponentsColor) ||
-    squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor)
+    squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor) ||
+    squareIsBeingCheckedByAPawn(newX, newY, boardState, opponentsColor)
   ) {
     return true
   }
 
   else return false
+}
+
+function squareIsBeingCheckedByAPawn(newX, newY, boardState, opponentsColor) {
+
+  if (opponentsColor === 'White') {
+
+    for (let i = 0; i < boardState.length; i++) {
+      const piece = boardState[i].props.type
+      const color = boardState[i].props.color
+
+      if (boardState[i].key === `${newX - 1},${newY - 1}` ||
+        boardState[i].key === `${newX + 1},${newY - 1}`) {
+        if (piece === 'Pawn' && color === opponentsColor) {
+          return true
+        }
+      }
+    }
+
+  }
+
+  if (opponentsColor === 'Black') {
+
+    for (let i = 0; i < boardState.length; i++) {
+      const piece = boardState[i].props.type
+      const color = boardState[i].props.color
+
+      if (boardState[i].key === `${newX - 1},${newY + 1}` ||
+        boardState[i].key === `${newX + 1},${newY + 1}`) {
+        if (piece === 'Pawn' && color === opponentsColor) {
+          return true
+        }
+      }
+    }
+
+  }
+
+  return false
 }
 
 function squareIsBeingCheckedByAKing(newX, newY, boardState, opponentsColor) {
@@ -95,8 +133,8 @@ function squareIsBeingCheckedByItsDiagonals(newX, newY, boardState, opponentsCol
     }
 
     if (direction === 'LowerRight') {
-      x = newX - i
-      y = newY + i
+      x = newX + i
+      y = newY - i
     }
 
     const pieceType = squareIsOccupiedBy(x, y, boardState).type
