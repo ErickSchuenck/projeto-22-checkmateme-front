@@ -7,7 +7,7 @@ import { queenRules } from "./queenRules"
 
 export default function isValidMove(previousX, previousY, newX, newY, typeOfPiece, colorOfPiece, myColor, boardState) {
 
-  console.log(`Hello ${myColor} player, trying to move your ${colorOfPiece} ${typeOfPiece} from ${previousX},${previousY} to ${newX},${newY}`)
+  // console.log(`Hello ${myColor} player, trying to move your ${colorOfPiece} ${typeOfPiece} from ${previousX},${previousY} to ${newX},${newY}`)
 
   if (!checkForPieceColor(colorOfPiece, myColor)) {
     // return false
@@ -15,7 +15,7 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   }
 
   if (!(pieceIsMoving(previousX, previousY, newX, newY))) {
-    console.log('piece is not moving')
+    // console.log('piece is not moving')
     return false
   }
 

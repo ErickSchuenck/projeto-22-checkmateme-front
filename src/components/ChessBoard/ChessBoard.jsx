@@ -3,11 +3,14 @@ import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
 import isValidMove from '../../Rulings/index.js'
 import { kingIsInCheck } from '../../Rulings/kingRules';
+import { isACastleMovement, typeOfCastle } from '../../Rulings/isACastleMovement';
 
 const XAxis = ['0','1','2','3','4','5','6','7']
 const YAxis = ['0','1','2','3','4','5','6','7']
 const initialBoardState = []
 const myColor = 'White'
+let whiteCastlePrivilege = true
+let blackCastlePrivilege = true
 
 function InsertStartingPieces() {
     for(let i =0; i<2; i++){
@@ -44,6 +47,7 @@ export default function ChessBoard() {
   const [YIni, setYIni] = useState(null)
   const [previousBoardState, setPreviousBoardState] = useState(initialBoardState)
   const [activePieceColor, setActivePieceColor] = useState()
+  
 
   useEffect(() => {
     if (kingIsInCheck(activePieceColor, getBoardConfig())) {
@@ -136,13 +140,27 @@ export default function ChessBoard() {
       const currentPiece = pieces.find(piece => piece.XPosition === coordinateX && piece.YPosition === coordinateY)
       const attackedPiece = pieces.find(piece => piece.XPosition === newX && piece.YPosition === newY)
       const validMove = isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)
+      const castleMovement = isACastleMovement(newBoard, newX, currentPiece.color, currentPiece.type)
       setActivePieceColor(currentPiece.color)
+
+      if(currentPiece && castleMovement){
+        console.log(whiteCastlePrivilege)
+        const castleIsAvaliable = colorHasCastlingPrivilege(currentPiece)
+        if (castleIsAvaliable){
+          console.log('castling')
+          const castleType = typeOfCastle(newX)
+          castleKing(castleType, currentPiece.color, newBoard)
+          return
+        }
+      }
       
       if (currentPiece && validMove){
+        
         if (isAPromotionMoviment(currentPiece, newY)){
           promotePawn(attackedPiece, newX, newY)
         } else {
           updateBoard(attackedPiece, newX, newY)
+          checkIfColorLostCastlingPrivilege(currentPiece)    
         }
       }
 
@@ -152,6 +170,61 @@ export default function ChessBoard() {
 
       setActivePiece(null)
     }
+  }
+
+  function checkIfColorLostCastlingPrivilege(currentPiece){
+    if (currentPiece.type === 'King' || currentPiece.type === 'Rook'){
+      if (currentPiece.color === 'Black'){
+        blackCastlePrivilege = false
+      }
+      if (currentPiece.color === 'White'){
+        whiteCastlePrivilege = false
+      }
+    }
+  }
+
+  function colorHasCastlingPrivilege(currentPiece){
+    if (
+      (currentPiece.color === 'White' && whiteCastlePrivilege === true) || 
+      (currentPiece.color === 'Black' && blackCastlePrivilege === true)
+      ){
+        return true
+      }
+    return false
+  }
+
+  function castleKing(castleType, color, boardState){
+
+    let NewKingXAxis;
+    let NewRookXAxis;
+    let previousRookAxis;
+
+    if (castleType === 'Short'){
+      NewKingXAxis = 6
+      NewRookXAxis = 5
+      previousRookAxis = 7
+    }
+
+    if (castleType === 'Long'){
+      NewKingXAxis = 2
+      NewRookXAxis = 3
+      previousRookAxis = 0
+    }
+
+    setPieces(pieces => {
+      return pieces.map(
+         piece => {
+
+          if (piece.type === 'King' && piece.color === color){
+           piece = {...piece, XPosition: NewKingXAxis}
+          }
+            
+          if (piece.type === 'Rook' && piece.color === color && piece.XPosition === previousRookAxis){
+           piece = {...piece, XPosition: NewRookXAxis}
+          }
+        return piece
+      })
+    })
   }
 
   function isAPromotionMoviment(currentPiece, newY){
@@ -188,10 +261,6 @@ export default function ChessBoard() {
         return piece
       })
     })
-  }
-
-  function rowBackBoard(){
-    setPieces(previousBoardState)
   }
 
   function promotePawn(attackedPiece, newX, newY){

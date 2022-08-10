@@ -27,7 +27,6 @@ export function kingRules(previousX, previousY, newX, newY, boardState, colorOfP
   }
 
   if (squareIsInCheck(newX, newY, boardState, colorOfPiece)) {
-    console.log('this square is in check')
     return false
   }
 
@@ -83,8 +82,6 @@ export function kingIsInCheck(colorOfPiece, boardState) {
   let x;
   let y;
 
-  console.log('boardstate', boardState)
-
   for (let i = 0; i < boardState.length; i++) {
     const type = boardState[i].props.type
     const color = boardState[i].props.color
@@ -94,11 +91,9 @@ export function kingIsInCheck(colorOfPiece, boardState) {
       y = boardState[i].key[2]
 
       if (squareIsInCheck(x, y, boardState, colorOfPiece)) {
-        console.log(`${colorOfPiece} king is in check`)
         return true
       }
     }
   }
-  console.log(`${colorOfPiece} king is not in check`)
   return false
 }

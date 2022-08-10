@@ -17,9 +17,7 @@ export default function PromotionScreen(){
 }
 
 const Container = styled.div`
-  width: 232px;
   background-color: red;
-  height: 80px;
   border-radius: 10px;
   display: flex;
 `
