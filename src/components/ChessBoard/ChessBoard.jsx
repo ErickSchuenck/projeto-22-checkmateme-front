@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Squares from '../Square/square';
 import { useEffect, useRef, useState } from 'react';
 import isValidMove from '../../Rulings/index.js'
+import { kingIsInCheck } from '../../Rulings/kingRules';
 
 const XAxis = ['0','1','2','3','4','5','6','7']
 const YAxis = ['0','1','2','3','4','5','6','7']
@@ -41,6 +42,17 @@ export default function ChessBoard() {
   const [squareSize, setSquareSize] = useState(null)
   const [XIni, setXIni] = useState(null) 
   const [YIni, setYIni] = useState(null)
+  const [previousBoardState, setPreviousBoardState] = useState(initialBoardState)
+  const [activePieceColor, setActivePieceColor] = useState()
+
+  useEffect(() => {
+    if (kingIsInCheck(activePieceColor, getBoardConfig())) {
+      setPieces(previousBoardState)
+    }
+    else {
+      setPreviousBoardState(pieces)
+    }
+  }, [pieces])
 
   useEffect(() => {setNewBoard(getBoardConfig)},[pieces])
 
@@ -124,20 +136,20 @@ export default function ChessBoard() {
       const currentPiece = pieces.find(piece => piece.XPosition === coordinateX && piece.YPosition === coordinateY)
       const attackedPiece = pieces.find(piece => piece.XPosition === newX && piece.YPosition === newY)
       const validMove = isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)
+      setActivePieceColor(currentPiece.color)
       
       if (currentPiece && validMove){
-        console.log(currentPiece.type)
-        console.log(currentPiece.color)
-        console.log(newY)
-
         if (isAPromotionMoviment(currentPiece, newY)){
           promotePawn(attackedPiece, newX, newY)
         } else {
           updateBoard(attackedPiece, newX, newY)
         }
-      } else {
+      }
+
+      else {
         resetPiece(activePiece)
       }
+
       setActivePiece(null)
     }
   }
@@ -162,20 +174,24 @@ export default function ChessBoard() {
 
   function updateBoard(attackedPiece, newX, newY){
     setPieces(pieces => {
-          return pieces.map(
-            piece => {
-            if (piece === attackedPiece){
-              piece = {...piece, XPosition: null, YPosition: null }
-              return piece
-            }
+      return pieces.map(
+         piece => {
+           if (piece === attackedPiece){
+           piece = {...piece, XPosition: null, YPosition: null }
+           return piece
+          }
             
-            if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
-              piece = {...piece, XPosition: newX, YPosition: newY }
-            }
+          if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
+           piece = {...piece, XPosition: newX, YPosition: newY }
+          }
 
-            return piece
-          })
-        })
+        return piece
+      })
+    })
+  }
+
+  function rowBackBoard(){
+    setPieces(previousBoardState)
   }
 
   function promotePawn(attackedPiece, newX, newY){

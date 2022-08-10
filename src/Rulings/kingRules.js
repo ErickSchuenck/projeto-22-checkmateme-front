@@ -83,6 +83,8 @@ export function kingIsInCheck(colorOfPiece, boardState) {
   let x;
   let y;
 
+  console.log('boardstate', boardState)
+
   for (let i = 0; i < boardState.length; i++) {
     const type = boardState[i].props.type
     const color = boardState[i].props.color

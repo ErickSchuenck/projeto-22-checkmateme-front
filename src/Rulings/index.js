@@ -19,10 +19,6 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
     return false
   }
 
-  // if (kingIsInCheck(colorOfPiece, boardState)) {
-  //   return false
-  // }
-
   if (typeOfPiece === 'Pawn') {
     return pawnRules(previousX, previousY, newX, newY, boardState, colorOfPiece)
   }
