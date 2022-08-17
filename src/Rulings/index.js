@@ -10,8 +10,7 @@ export default function isValidMove(previousX, previousY, newX, newY, typeOfPiec
   // console.log(`Hello ${myColor} player, trying to move your ${colorOfPiece} ${typeOfPiece} from ${previousX},${previousY} to ${newX},${newY}`)
 
   if (!checkForPieceColor(colorOfPiece, myColor)) {
-    // return false
-    // comentado por enquanto, pois ambas cores devem ser testadas
+    return false
   }
 
   if (!(pieceIsMoving(previousX, previousY, newX, newY))) {
