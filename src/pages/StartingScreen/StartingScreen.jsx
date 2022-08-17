@@ -10,7 +10,9 @@ export default function StartingScreen() {
     <div className='leftSide'>
       <h1>Play Vs...</h1>
       <div className='avatar'>
-        <img src='./assets/avatar.svg' alt='avatar'/>
+        <a href={'https://www.chess.com/member/esfm'}>
+          <img src='./assets/avatar.svg' alt='avatar'/>
+          </a>
       </div>
       <h2><bold>Erick Bot</bold> (1500)</h2>
       <div className='description'>
@@ -44,10 +46,17 @@ export default function StartingScreen() {
         <h4><a href={'https://www.linkedin.com/in/erick-schuenck-fava-mokdeci-603367221/'}>My linkedin</a></h4>
       </div>
       <div className='links'>
+        <h5><ion-icon name="bookmark"/></h5>
+        <h4><a href={'https://curriculum-vitae-chi.vercel.app/'}>My digital curriculum</a></h4>
+      </div>
+      <div className='links'>
         <h5>&#9813;</h5>
         <h4><a href={'https://www.chess.com/member/esfm'}>My chess.com</a></h4>
       </div>
+     
     </div>
+
+    
   </Container>
   )
 }

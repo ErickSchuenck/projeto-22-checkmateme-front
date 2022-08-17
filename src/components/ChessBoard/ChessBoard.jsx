@@ -5,6 +5,7 @@ import isValidMove from '../../Rulings/index.js'
 import { kingIsInCheck } from '../../Rulings/kingRules';
 import { isACastleMovement, typeOfCastle } from '../../Rulings/isACastleMovement';
 import sendMoveToServer from '../../Utils/connection';
+import { convertNotationFromApiToApp } from '../../Utils/convertNotation';
 
 const XAxis = ['0','1','2','3','4','5','6','7']
 const YAxis = ['0','1','2','3','4','5','6','7']
@@ -144,15 +145,11 @@ export default function ChessBoard() {
       const castleMovement = isACastleMovement(newBoard, newX, currentPiece.color, currentPiece.type)
       setActivePieceColor(currentPiece.color)
 
-      const verification = sendMoveToServer(coordinateX, coordinateY, newX, newY)
-      console.log(verification)
-      
       if(currentPiece && castleMovement){
         const castleIsAvaliable = colorHasCastlingPrivilege(currentPiece)
         if (castleIsAvaliable){
           const castleType = typeOfCastle(newX)
           castleKing(castleType, currentPiece.color, newBoard)
-          // return
         }
       }
       
@@ -167,9 +164,17 @@ export default function ChessBoard() {
 
       else {
         resetPiece(activePiece)
+        setActivePiece(null)
+        return
       }
-
       
+      // const computerMove = sendMoveToServer(coordinateX, coordinateY, newX, newY)
+      // FIXMEEEE!!!!! NEED AWAITING
+      
+      const computerMove = {from: 'd7', to: 'd6'}
+      // FIXMEEE!!!!!! NEED TO FIX THE AXIOS REQUEST
+      
+      updateBoardUsingComputerMove(computerMove)
       setActivePiece(null)
     }
   }
@@ -258,6 +263,28 @@ export default function ChessBoard() {
           }
             
           if (piece.XPosition === coordinateX && piece.YPosition === coordinateY){
+           piece = {...piece, XPosition: newX, YPosition: newY }
+          }
+
+        return piece
+      })
+    })
+  }
+
+  function updateBoardUsingComputerMove(computerMove){
+    const {from, to} = convertNotationFromApiToApp(computerMove);
+    const { previousX, previousY } = from
+    const { newX, newY } = to
+
+    setPieces(pieces => {
+      return pieces.map(
+         piece => {
+           if (piece.XPosition === newX && piece.YPosition === newY){
+           piece = {...piece, XPosition: null, YPosition: null }
+           return piece
+          }
+            
+          if (piece.XPosition === previousX && piece.YPosition === previousY){
            piece = {...piece, XPosition: newX, YPosition: newY }
           }
 
