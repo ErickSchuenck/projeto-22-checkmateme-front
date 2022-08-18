@@ -10,7 +10,7 @@ export default function Squares({colorOfTheSquare, pieceImg}) {
 const Square = styled.div`
   width: 58px;
   height: 58px;
-  background-color: ${props => props.color === 'Black' ? '#C7A37B' : '#EEDAB6'};
+  background-color: ${props => props.color === 'Black' ? '#EEDAB6' : '#C7A37B' };
   display: flex;
   justify-content: center;
   align-items: center;
