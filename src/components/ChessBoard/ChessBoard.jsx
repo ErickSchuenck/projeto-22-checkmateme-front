@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import isValidMove from '../../Rulings/index.js'
 import { kingIsInCheck } from '../../Rulings/kingRules';
 import { isACastleMovement, typeOfCastle } from '../../Rulings/isACastleMovement';
-import sendMoveToServer from '../../Utils/connection';
+import { sendMoveToServer } from '../../Utils/connection';
 import { convertNotationFromApiToApp } from '../../Utils/convertNotation';
 
 const XAxis = ['0','1','2','3','4','5','6','7']
@@ -49,6 +49,7 @@ export default function ChessBoard() {
   const [YIni, setYIni] = useState(null)
   const [previousBoardState, setPreviousBoardState] = useState(initialBoardState)
   const [activePieceColor, setActivePieceColor] = useState()
+  const [isLocked, setIsLocked] = useState(false)
   
 
   useEffect(() => {
@@ -110,6 +111,7 @@ export default function ChessBoard() {
   }
 
   function movePiece(event){
+
     if (!activePiece) { 
       return 
     }
@@ -133,6 +135,7 @@ export default function ChessBoard() {
   }
 
   function dropPiece(event){
+
     const chessboard = chessBoardRef.current
     
     if (activePiece){
@@ -140,20 +143,19 @@ export default function ChessBoard() {
       const newY = Math.abs(Math.ceil((event.clientY - chessboard.offsetTop -8*squareSize) / squareSize))
       
       const currentPiece = pieces.find(piece => piece.XPosition === coordinateX && piece.YPosition === coordinateY)
+      if (!currentPiece) return
       const attackedPiece = pieces.find(piece => piece.XPosition === newX && piece.YPosition === newY)
-      const validMove = isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)
+      let validMove = isValidMove(coordinateX, coordinateY, newX, newY, currentPiece.type, currentPiece.color, myColor, newBoard)
       const castleMovement = isACastleMovement(newBoard, newX, currentPiece.color, currentPiece.type)
       setActivePieceColor(currentPiece.color)
+      const castleIsAvaliable = colorHasCastlingPrivilege(currentPiece)
 
-      if(currentPiece && castleMovement){
-        const castleIsAvaliable = colorHasCastlingPrivilege(currentPiece)
-        if (castleIsAvaliable){
-          const castleType = typeOfCastle(newX)
-          castleKing(castleType, currentPiece.color, newBoard)
-        }
+      if(currentPiece && castleMovement && castleIsAvaliable){
+        const castleType = typeOfCastle(newX)
+        castleKing(castleType, currentPiece.color, newBoard)
       }
-      
-      if (currentPiece && validMove){  
+
+      else if (currentPiece && validMove){  
         if (isAPromotionMoviment(currentPiece, newY)){
           promotePawn(attackedPiece, newX, newY)
         } else {
@@ -161,21 +163,22 @@ export default function ChessBoard() {
           checkIfColorLostCastlingPrivilege(currentPiece)    
         }
       }
-
+      
       else {
         resetPiece(activePiece)
         setActivePiece(null)
         return
       }
-      
-      // const computerMove = sendMoveToServer(coordinateX, coordinateY, newX, newY)
-      // FIXMEEEE!!!!! NEED AWAITING
-      
-      const computerMove = {from: 'd7', to: 'd6'}
-      // FIXMEEE!!!!!! NEED TO FIX THE AXIOS REQUEST
-      
-      updateBoardUsingComputerMove(computerMove)
-      setActivePiece(null)
+
+
+      setIsLocked(true)
+
+      const computerMove = sendMoveToServer(coordinateX, coordinateY, newX, newY)
+      computerMove.then((response) => {
+        updateBoardUsingComputerMove(response, newBoard)
+        setActivePiece(null)
+        setIsLocked(false)
+      })
     }
   }
 
@@ -271,10 +274,27 @@ export default function ChessBoard() {
     })
   }
 
-  function updateBoardUsingComputerMove(computerMove){
+  function updateBoardUsingComputerMove(computerMove, boardState){
     const {from, to} = convertNotationFromApiToApp(computerMove);
     const { previousX, previousY } = from
     const { newX, newY } = to
+
+
+    if (previousX === 4 && previousY === 7){
+      const king = pieces.find(piece => piece.type === 'King')
+      if (king.XPosition === 4 && king.YPosition === 7) {
+        // short castle
+        if (newX === 6){
+          castleKing('Short', 'Black', boardState)
+          return
+        }
+        // long castle
+        if (newX === 2){
+          castleKing('Long', 'Black', boardState)
+          return
+        }
+      }
+    }
 
     setPieces(pieces => {
       return pieces.map(
@@ -320,6 +340,7 @@ export default function ChessBoard() {
       onMouseUp={event => dropPiece(event)}
       id='chessboard'
       ref={chessBoardRef}
+      className={isLocked? 'locked' : ''}
     >
       {newBoard}
     </Container>
@@ -333,4 +354,5 @@ const Container = styled.div`
   color: #854a4a;
   max-width:464px;
   left: 10px;
+  &.locked {pointer-events: none};
 `

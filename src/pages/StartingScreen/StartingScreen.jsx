@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { Link } from "react-router-dom";
 
 export default function StartingScreen() {
   const [userName, setUserName] = useState('')
@@ -32,9 +33,11 @@ export default function StartingScreen() {
       isLoading ? 
         <div className='loading'/>
         :
-        <button onClick={() => setIsLoading(true)}>
-          <ion-icon name="checkmark-circle-outline"></ion-icon>
-        </button>
+        <Link to={'/GameScreen'}>
+          <button onClick={() => setIsLoading(true)}>
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </button>
+        </Link>
       }
       <h2><span>Find Me in:</span></h2>
       <div className='links' >

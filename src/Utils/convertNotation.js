@@ -28,6 +28,8 @@ export function convertNotationFromApiToApp(computerMove) {
 }
 
 function convertLetterIntoNumber(value) {
+  value = value.toLowerCase()
+
   if (value === 'a') return 0
   if (value === 'b') return 1
   if (value === 'c') return 2
