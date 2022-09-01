@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import ChessBoard from '../../components/ChessBoard/ChessBoard';
+import ChessBoard from '../../components/ChessBoard';
 import { startGame } from '../../Utils/connection';
 
-
 export default function GameScreen() {
-  useEffect(() => {startGame()},[])
+  useEffect(() => {
+    startGame();
+  }, []);
 
-  return(
-  <Container>
-    <ChessBoard/>
-  </Container>
-  )
+  return (
+    <Container>
+      <ChessBoard />
+    </Container>
+  );
 }
 
 const Container = styled.div`
@@ -24,4 +25,4 @@ const Container = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-`
+`;
