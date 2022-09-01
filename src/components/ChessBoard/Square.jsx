@@ -34,7 +34,7 @@ const SquareDiv = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: center;
-
+  user-select: none;
   &.odd {
     background-color: #eedab6;
   }

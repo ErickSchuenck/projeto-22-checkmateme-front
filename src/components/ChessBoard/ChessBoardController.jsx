@@ -28,10 +28,21 @@ export default function ChessBoardController() {
     top: 0,
     left: 0
   });
-  // const [keyPressed, setKeyPressed] =
+
+  const onMouseMove = e => {
+    setCursorPosition({ top: e.clientY, left: e.clientX });
+  };
 
   const onMouseUp = e => {
+    // No square selected
     if (activeSquare[0] === -1 && activeSquare[1] === -1) {
+      return;
+    }
+
+    // No piece on square
+    if (
+      position[position.length - 1][activeSquare[0]][activeSquare[1]] === ''
+    ) {
       return;
     }
 
@@ -44,13 +55,22 @@ export default function ChessBoardController() {
       Math.round((cursorStartPos.left - clientX) / 58)
     ];
 
+    if (squareDiff[0] === 0 && squareDiff[1] === 0) {
+      return; // It's the same square
+    }
+
     const newSquare = [
       activeSquare[0] - squareDiff[0],
       activeSquare[1] - squareDiff[1]
     ];
 
-    if (squareDiff[0] === 0 && squareDiff[1] === 0) {
-      return; // It's the same square
+    if (
+      newSquare[0] < 0 ||
+      newSquare[1] < 0 ||
+      newSquare[0] > 7 ||
+      newSquare[1] > 7
+    ) {
+      return; // Outside of the board
     }
 
     // Check
@@ -75,10 +95,6 @@ export default function ChessBoardController() {
     setCurrentMove(move => move + 1);
   };
 
-  const onMouseMove = e => {
-    setCursorPosition({ top: e.clientY, left: e.clientX });
-  };
-
   // Event handler utilizing useCallback ...
   // ... so that reference never changes.
   const onKeyDown = useCallback(
@@ -95,9 +111,7 @@ export default function ChessBoardController() {
   );
   // Add event listener using our hook
   useEventListener('keydown', onKeyDown);
-  useEventListener('mousemove', onMouseMove);
   useEventListener('mouseup', onMouseUp);
-  useEventListener('dragend', onMouseUp);
 
   return (
     <ContextProvider
@@ -113,7 +127,8 @@ export default function ChessBoardController() {
         cursorPosition,
         setCursorPosition,
         cursorStartPos,
-        setCursorStartPos
+        setCursorStartPos,
+        onMouseMove
       }}
     >
       <Wrapper>

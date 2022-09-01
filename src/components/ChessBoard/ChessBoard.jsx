@@ -4,11 +4,11 @@ import { useContext } from 'react';
 import { ChessContext } from './chessContext';
 
 export default function ChessBoard() {
-  const { position, currentMove } = useContext(ChessContext);
+  const { position, currentMove, onMouseMove } = useContext(ChessContext);
   // Renderer component for chess board
 
   return (
-    <Container>
+    <Container onMouseMove={onMouseMove}>
       {position[currentMove]?.map((row, i) =>
         row.map((square, j) => (
           <Square

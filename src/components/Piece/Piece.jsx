@@ -1,8 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-function Piece({ type, active }) {
-  return <PieceDiv className={`${type} ${active ? 'active' : ''}`} />;
+function Piece({ type, active, lastMove }) {
+  return (
+    <PieceDiv
+      className={`${type} ${active ? 'active' : ''} ${
+        lastMove ? 'lastMove' : ''
+      }`}
+    />
+  );
 }
 
 export default Piece;
@@ -10,8 +16,8 @@ export default Piece;
 const PieceDiv = styled.div`
   flex: 1 1 auto;
   background-position: center;
-
   cursor: pointer;
+
   &.p {
     background-image: url('assets/WhitePawn.png');
   }
@@ -60,9 +66,12 @@ const PieceDiv = styled.div`
     background-image: url('assets/BlackQueen.png');
   }
 
+  &.lastMove,
   &.active {
-    /* display: none; */
-    background-color: rgba(241, 196, 15, 0.5);
+    background-color: rgba(255, 255, 0, 0.5);
+  }
+
+  &.active {
     background-image: none;
   }
 `;
